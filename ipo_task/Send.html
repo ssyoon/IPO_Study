@@ -1,0 +1,54 @@
+{{ block title }}Submit Your Bids{{ endblock }}
+{{ block content }}
+
+<p>
+<br>There are 20 rounds in this session, and the current round is {{ player.round_number }}</br>
+
+<br>The number of units for sale this round: 100,000</br>
+
+<br>Please enter at least one bid.</br>
+
+<br>You are Participant A. You were initially endowed {{Constants.uniform_informed_endowment}},
+    and your current budget is {{ player.current_budget }}</br>
+
+<br>Your market signal is {{ player.market_signal }}</br>
+
+</p>
+
+<table>
+  <tr>
+    <th> </th>
+    <th> </th>
+    <th style="text-align: center;"> Price </th>
+    <th> </th>
+    <th style="text-align:center;"> Quantity </th>
+  </tr>
+  <tr>
+    <td> Bid 1 </td>
+    <td> </td>
+    <td>{{ form.price1 }}</td>
+    <td> </td>
+    <td>{{ form.quantity1 }}</td>
+  </tr>
+  <tr>
+    <td> Bid 2 </td>
+    <td> </td>
+    <td>{{ form.price2 }}</td>
+    <td> </td>
+    <td>{{ form.quantity2 }}</td>
+  </tr>
+  <tr>
+    <td> Bid 3 </td>
+    <td> </td>
+    <td>{{ form.price3 }}</td>
+    <td> </td>
+    <td>{{ form.quantity3 }}</td>
+  </tr>
+</table>
+
+
+<br></br>
+
+<button class="otree-btn-next btn btn-primary">Submit</button>
+
+{{ endblock }}
