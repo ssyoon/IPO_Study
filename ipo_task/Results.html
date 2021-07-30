@@ -1,21 +1,11 @@
 {{ block title }}Your Result in This Round{{ endblock }}
 {{ block content }}
 
-{{ if player.id_in_group == 1 }}
-    <p>
-        You purchased {{ player.quantity1 }} shares at price {{ player.price1 }}.
-    </p>
-{{ else }}
-    <p>
-        You purchased {{ player.quantity1 }} shares at price {{ player.price1 }}.
-    </p>
-
-{{ endif }}
 
 <br>Current market price is {{ group.market_price }}</br>
 
 <p>
-Therefore, your total payoff in this round is {{ player.player_total_bid_amount }}.
+Your total bidding in this round is {{ player.player_total_bid_amount }}.
 </p>
 
 {{ next_button }}
