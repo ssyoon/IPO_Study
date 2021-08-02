@@ -59,6 +59,9 @@ class Player(BasePlayer):
     player_point_earning = models.FloatField()
     additional_cost = models.FloatField()
 
+    cumulative_quantity_above_market_price = models.FloatField()
+    cumulative_quantity_at_market_price = models.FloatField()
+
 
 
 class Send(Page):
@@ -145,10 +148,10 @@ class ResultsWaitPage(WaitPage):
 
         # Assign group-level market price and market value
         if total_bid_number <= Constants.total_share:
-            market_price = 0
+            market_price = 0 #if total bid quantity is less than available quantity, market price set to zero
         else:
             first_point_after_even_point = np.min(np.where(np.array(all_cumulative_quantity) > Constants.total_share))
-            market_price = full_response_set_sorted[first_point_after_even_point][2]
+            market_price = full_response_set_sorted[first_point_after_even_point][2] #otherwise, market price is the highest submitted price where submitted total quantity exceeds the available quantity
         group.market_price = market_price
         group.point_for_earning = market_value - market_price
         group.total_bid_number = total_bid_number
@@ -157,23 +160,29 @@ class ResultsWaitPage(WaitPage):
 
         p1_quantity_purchased = 0
         p2_quantity_purchased = 0
-        total_at_market_price = len([i for i in full_response_set_sorted if i[2] == market_price])
+        cumulative_quantity_above_market_price = 0
+        total_at_market_price = 0
+        for i in full_response_set_sorted:
+            if i[2] == market_price:
+                total_at_market_price += i[3]
+
         for i in full_response_set_sorted:
             if i[2] > market_price:
-                if i[0] == 1:
-                    p1_quantity_purchased += i[3]
+                if i[0] == 1: #i[0] indicates player ID
+                    p1_quantity_purchased += i[3] # i[2] indicates player's quantity submitted at the paired price
+                    cumulative_quantity_above_market_price += i[3]
                 elif i[0] == 2:
                     p2_quantity_purchased += i[3]
-            elif i[2] == market_price:
+                    cumulative_quantity_above_market_price += i[3]
+            elif i[2] == market_price: # i[2] indicates player's price submitted
                 if i[0] == 1:
-                    p1_quantity_purchased += round(total_at_market_price * (i[3]/total_at_market_price))
-                    p2_quantity_purchased += round(total_at_market_price * (i[3] / total_at_market_price))
+                    p1_quantity_purchased += round((Constants.total_share - cumulative_quantity_above_market_price) * (i[3]/total_at_market_price))
+                elif i[0] == 2:
+                    p2_quantity_purchased += round((Constants.total_share - cumulative_quantity_above_market_price) * (i[3]/total_at_market_price))
             p1 = group.get_player_by_id(1)
             p2 = group.get_player_by_id(2)
             p1.player_quantity_purchased = p1_quantity_purchased
             p2.player_quantity_purchased = p2_quantity_purchased
-
-            p2.player_point_earning = group.point_for_earning * p2_quantity_purchased
 
         # penalty for bidding more than 100,000
         p1 = p1.group.get_player_by_id(1)
@@ -182,13 +191,13 @@ class ResultsWaitPage(WaitPage):
             p1.additional_cost = 5000
         else:
             p1.additional_cost = 0
-        p1.player_point_earning = group.point_for_earning * p1_quantity_purchased - p1.additional_cost
+        p1.player_point_earning = round(group.point_for_earning * p1_quantity_purchased - p1.additional_cost, 2)
 
         if p2.player_total_bid_number > 100000:
             p2.additional_cost = 5000
         else:
             p2.additional_cost = 0
-        p2.player_point_earning = group.point_for_earning * p2_quantity_purchased - p2.additional_cost
+        p2.player_point_earning = round(group.point_for_earning * p2_quantity_purchased - p2.additional_cost, 2)
 
 
 class Results(Page):
