@@ -1,12 +1,10 @@
 {{ block title }}Your Result in This Round{{ endblock }}
 {{ block content }}
 
-
-<br>Current market price is {{ group.point_for_earning }}</br>
-<br>Current market price is {{ group.market_value }}</br>
+<br>Market price in this round is {{ group.market_price }}</br>
+<br>Your point earning this round is {{ player.player_point_earning }}</br>
 
 <p>
-Your total bidding in this round is {{ player.player_total_bid_amount }}.
 </p>
 
 {{ next_button }}
