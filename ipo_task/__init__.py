@@ -5,17 +5,21 @@ c = cu
 
 doc = ''
 class Constants(BaseConstants):
-    players_per_group = 2
+    players_per_group = 4
     num_rounds = 2
     name_in_url = 'IPO_Study'
     total_share = 100000
     uniform_informed_endowment = 350000
     uniform_uninformed_endowment = 400000
+    uniform_informed_max = 150000
+    uniform_uninformed_max = 80000
     fixed_informed_endowment = 100000
     fixed_uninformed_endowment = 150000
     signal_list = [
         ['Low', 'High'],
-        ['High', 'Low']
+        ['High', 'Low'],
+        ['Low', 'High'],
+        ['Uninformed', 'Uninformed']
     ]
 
 
@@ -49,6 +53,12 @@ class Player(BasePlayer):
     quantity2 = make_quantity_field()
     price3 = make_price_field()
     quantity3 = make_quantity_field()
+    price4 = make_price_field()
+    quantity4 = make_quantity_field()
+    price5 = make_price_field()
+    quantity5 = make_quantity_field()
+    price6 = make_price_field()
+    quantity6 = make_quantity_field()
     combined_earnings = models.IntegerField()
     player_total_bid_amount = models.FloatField()
     player_total_bid_number = models.IntegerField()
@@ -66,16 +76,23 @@ class Player(BasePlayer):
 
 class Send(Page):
     form_model = 'player'
-    form_fields = ['price1', 'quantity1', 'price2', 'quantity2', 'price3', 'quantity3']
+    form_fields = ['price1', 'quantity1', 'price2', 'quantity2', 'price3', 'quantity3', 'price4', 'quantity4', 'price5', 'quantity5', 'price6', 'quantity6']
 
     @staticmethod
     def vars_for_template(player: Player):
         if player.round_number == 1:
-            player.current_budget = Constants.uniform_informed_endowment
+            if player.id_in_group == 4:
+                player.starting_budget = Constants.uniform_uninformed_endowment                
+                player.current_budget = Constants.uniform_uninformed_endowment                
+                player.max_quantity = Constants.uniform_uninformed_max                
+            else:
+                player.starting_budget = Constants.uniform_informed_endowment                
+                player.current_budget = Constants.uniform_informed_endowment
+                player.max_quantity = Constants.uniform_informed_max                
         else:
             print(player.round_number)
             previous_round = player.in_round(player.round_number-1)
-            player.current_budget = previous_round.current_budget - previous_round.player_point_earning
+            player.current_budget = previous_round.current_budget + previous_round.player_point_earning
 
         player_signal_condition = player.id_in_group
         player.market_signal = Constants.signal_list[player.id_in_group-1][player.round_number-1]
@@ -113,14 +130,58 @@ class ResultsWaitPage(WaitPage):
             except TypeError:
                 bid3_price = -99
                 bid3_quantity = -99
+            try:
+                bid4_price = round(player.price4,2)
+                bid4_quantity = round(player.quantity4,2)
+            except TypeError:
+                bid4_price = -99
+                bid4_quantity = -99
+            try:
+                bid5_price = round(player.price5,2)
+                bid5_quantity = round(player.quantity5,2)
+            except TypeError:
+                bid5_price = -99
+                bid5_quantity = -99
+            try:
+                bid6_price = round(player.price6,2)
+                bid6_quantity = round(player.quantity6,2)
+            except TypeError:
+                bid6_price = -99
+                bid6_quantity = -99
 
             # Each player's response matrix
             player_response_set = [[player.id_in_group, 1, bid1_price, bid1_quantity],
                                    [player.id_in_group, 2, bid2_price, bid2_quantity],
-                                   [player.id_in_group, 3, bid3_price, bid3_quantity]]
-            player_response_set_sorted = sorted(player_response_set, key=lambda x:x[2], reverse=True)
-            player_response_set_clean = [pairs for pairs in player_response_set_sorted if -99 not in pairs]
-            full_response_set.extend(player_response_set_clean)
+                                   [player.id_in_group, 3, bid3_price, bid3_quantity],
+                                   [player.id_in_group, 4, bid4_price, bid4_quantity],
+                                   [player.id_in_group, 5, bid5_price, bid5_quantity],
+                                   [player.id_in_group, 6, bid6_price, bid6_quantity]]
+            player_response_set_clean = [pairs for pairs in player_response_set if -99 not in pairs]
+            # Tring to impose max quantities and current budget
+            player_running_quantity = 0
+            player_running_bid_amount = 0
+            player_over_quantity = 0
+            player_add_cost = 0
+            player_over_budget = 0
+            for i in player_response_set_clean:
+                player_running_quantity += i[3]
+                player_running_bid_amount += i[2]*i[3]
+                if player_over_quantity == 1:
+                    i[3] = 0
+                elif player_running_quantity > player.max_quantity:
+                    player_over_quantity = 1
+                    i[3] += player.max_quantity - player_running_quantity
+                    player_running_quantity = player.max_quantity
+                if player_running_quantity > 100000:
+                    player_add_cost = 5000
+                if player_over_budget == 1:
+                    i[3] = 0
+                elif player_running_bid_amount > player.current_budget - player_add_cost:
+                    player_over_budget = 1
+                    i[3] += round((player.current_budget - player_add_cost - player_running_bid_amount) / i[2], 2) # This cap could reduce quantity below addtitional cost threshold, but it seems too complex to compute or explain to players
+                    
+            player_response_set_sorted = sorted(player_response_set_clean, key=lambda x:x[2], reverse=True)
+            full_response_set.extend(player_response_set_sorted)
 
             # Total Number of Bids of each player
             player_total_bid_number = 0
@@ -160,6 +221,8 @@ class ResultsWaitPage(WaitPage):
 
         p1_quantity_purchased = 0
         p2_quantity_purchased = 0
+        p3_quantity_purchased = 0
+        p4_quantity_purchased = 0
         cumulative_quantity_above_market_price = 0
         total_at_market_price = 0
         for i in full_response_set_sorted:
@@ -174,19 +237,35 @@ class ResultsWaitPage(WaitPage):
                 elif i[0] == 2:
                     p2_quantity_purchased += i[3]
                     cumulative_quantity_above_market_price += i[3]
+                elif i[0] == 3:
+                    p3_quantity_purchased += i[3]
+                    cumulative_quantity_above_market_price += i[3]
+                elif i[0] == 4:
+                    p4_quantity_purchased += i[3]
+                    cumulative_quantity_above_market_price += i[3]
             elif i[2] == market_price: # i[2] indicates player's price submitted
                 if i[0] == 1:
                     p1_quantity_purchased += round((Constants.total_share - cumulative_quantity_above_market_price) * (i[3]/total_at_market_price))
                 elif i[0] == 2:
                     p2_quantity_purchased += round((Constants.total_share - cumulative_quantity_above_market_price) * (i[3]/total_at_market_price))
+                elif i[0] == 3:
+                    p3_quantity_purchased += round((Constants.total_share - cumulative_quantity_above_market_price) * (i[3]/total_at_market_price))
+                elif i[0] == 4:
+                    p4_quantity_purchased += round((Constants.total_share - cumulative_quantity_above_market_price) * (i[3]/total_at_market_price))
             p1 = group.get_player_by_id(1)
             p2 = group.get_player_by_id(2)
+            p3 = group.get_player_by_id(3)
+            p4 = group.get_player_by_id(4)
             p1.player_quantity_purchased = p1_quantity_purchased
             p2.player_quantity_purchased = p2_quantity_purchased
+            p3.player_quantity_purchased = p3_quantity_purchased
+            p4.player_quantity_purchased = p4_quantity_purchased
 
         # penalty for bidding more than 100,000
         p1 = p1.group.get_player_by_id(1)
         p2 = p2.group.get_player_by_id(2)
+        p3 = p3.group.get_player_by_id(2)
+        p4 = p4.group.get_player_by_id(2)
         if p1.player_total_bid_number > 100000:
             p1.additional_cost = 5000
         else:
@@ -199,6 +278,13 @@ class ResultsWaitPage(WaitPage):
             p2.additional_cost = 0
         p2.player_point_earning = round(group.point_for_earning * p2_quantity_purchased - p2.additional_cost, 2)
 
+        if p3.player_total_bid_number > 100000:
+            p3.additional_cost = 5000
+        else:
+            p3.additional_cost = 0
+        p3.player_point_earning = round(group.point_for_earning * p3_quantity_purchased - p3.additional_cost, 2)
+
+        p4.player_point_earning = round(group.point_for_earning * p4_quantity_purchased, 2)
 
 class Results(Page):
     pass
