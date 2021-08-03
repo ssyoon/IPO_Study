@@ -6,9 +6,9 @@
 
 <br>The number of units for sale this round: 100,000</br>
 
-<br>Please enter at least one bid.</br>
+<br>Please enter at least one bid. You may bid for up to  {{ player.max_quantity }} units, and bids over this limit will be disregarded (they will be registered in the order you enter them on this page)</br>
 
-<br>You are Participant A. You were initially endowed {{Constants.uniform_informed_endowment}},
+<br>You are Participant A. You were initially endowed {{ player.starting_budget }},
     and your current budget is {{ player.current_budget }}</br>
 
 <br>Your market signal is {{ player.market_signal }}</br>
@@ -43,6 +43,27 @@
     <td>{{ form.price3 }}</td>
     <td> </td>
     <td>{{ form.quantity3 }}</td>
+  </tr>
+  <tr>
+    <td> Bid 4 </td>
+    <td> </td>
+    <td>{{ form.price4 }}</td>
+    <td> </td>
+    <td>{{ form.quantity4 }}</td>
+  </tr>
+  <tr>
+    <td> Bid 5 </td>
+    <td> </td>
+    <td>{{ form.price5 }}</td>
+    <td> </td>
+    <td>{{ form.quantity5 }}</td>
+  </tr>
+  <tr>
+    <td> Bid 6 </td>
+    <td> </td>
+    <td>{{ form.price6 }}</td>
+    <td> </td>
+    <td>{{ form.quantity6 }}</td>
   </tr>
 </table>
 
