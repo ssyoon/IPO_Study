@@ -185,7 +185,7 @@ class ResultsWaitPage(WaitPage):
                     i[3] += round((player.current_budget - player_add_cost - player_running_bid_amount) / i[2], 2)  # This cap could reduce quantity below addtitional cost threshold, but it seems too complex to compute or explain to players
 
             #player_response_set_sorted = sorted(player_response_set_clean, key=lambda x: x[2], reverse=True)
-            full_response_set.extend(player_response_set_sorted)
+            full_response_set.extend(player_response_set_clean)
 
             # Total Number of Bids of each player
             player_total_bid_number = 0
@@ -203,6 +203,7 @@ class ResultsWaitPage(WaitPage):
             total_bidding += player_total_bid_amount
             if player.market_signal == 'High':
                 market_value += 1
+
         # Group-level Values
         # Get Market Value of each round
         full_response_set_sorted = sorted(full_response_set, key=lambda x: x[2], reverse=True)
