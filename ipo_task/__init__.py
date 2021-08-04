@@ -158,7 +158,8 @@ class ResultsWaitPage(WaitPage):
                                    [player.id_in_group, 4, bid4_price, bid4_quantity],
                                    [player.id_in_group, 5, bid5_price, bid5_quantity],
                                    [player.id_in_group, 6, bid6_price, bid6_quantity]]
-            player_response_set_clean = [pairs for pairs in player_response_set if -99 not in pairs]
+            player_response_set_sorted = sorted(player_response_set, key=lambda x: x[2], reverse=True)
+            player_response_set_clean = [pairs for pairs in player_response_set_sorted if -99 not in pairs]
 
             # Tring to impose max quantities and current budget
             player_running_quantity = 0
@@ -183,7 +184,7 @@ class ResultsWaitPage(WaitPage):
                     player_over_budget = 1
                     i[3] += round((player.current_budget - player_add_cost - player_running_bid_amount) / i[2], 2)  # This cap could reduce quantity below addtitional cost threshold, but it seems too complex to compute or explain to players
 
-            player_response_set_sorted = sorted(player_response_set_clean, key=lambda x: x[2], reverse=True)
+            #player_response_set_sorted = sorted(player_response_set_clean, key=lambda x: x[2], reverse=True)
             full_response_set.extend(player_response_set_sorted)
 
             # Total Number of Bids of each player
