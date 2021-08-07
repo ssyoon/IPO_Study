@@ -41,14 +41,14 @@ def make_price_field():
 
 def make_quantity_field():
     return models.IntegerField(
-        min=0, max=150000,
+        min=0,
         blank=True
     )
 
 
 class Player(BasePlayer):
     price1 = models.FloatField(min=0, max=6)
-    quantity1 = models.IntegerField(min=0, max=150000)
+    quantity1 = models.IntegerField(min=0)
     price2 = make_price_field()
     quantity2 = make_quantity_field()
     price3 = make_price_field()
@@ -99,6 +99,21 @@ class Send(Page):
         player_signal_condition = player.id_in_group
         player.market_signal = Constants.signal_list[player.id_in_group-1][player.round_number-1]
 
+    # Custom Validation
+    @staticmethod
+    def error_message(player: Player, values):
+        player_signal_in_game = Constants.signal_list[player.id_in_group-1][player.round_number-1]
+        all_response_list = [[values['price1'], values['quantity1']],
+                             [values['price2'], values['quantity2']],
+                             [values['price3'], values['quantity3']]]
+        total_submitted_quantity = sum([i[1] for i in all_response_list if None not in i])
+        if player_signal_in_game == "Uninformed":
+            if total_submitted_quantity > Constants.uniform_uninformed_max:
+                return "You submitted " + str(total_submitted_quantity) + " which is above the maximum possible bid quantity " + str(Constants.uniform_uninformed_max)
+        if player_signal_in_game != "Uninformed":
+            if total_submitted_quantity > Constants.uniform_informed_max:
+                return "You submitted " + str(total_submitted_quantity) + " which is above the maximum possible bid quantity " + str(Constants.uniform_informed_max)
+
 
 class ResultsWaitPage(WaitPage):
     #after_all_players_arrive = 'set_payoffs'
@@ -116,37 +131,37 @@ class ResultsWaitPage(WaitPage):
             # get price and quantity responses incomplete pairs will be coded -99
             try:
                 bid1_price = round(player.price1,2)
-                bid1_quantity = round(player.quantity1,2)
+                bid1_quantity = player.quantity1
             except TypeError:
                 bid_price = -99
                 bid1_quantity = -99
             try:
                 bid2_price = round(player.price2,2)
-                bid2_quantity = round(player.quantity2,2)
+                bid2_quantity = player.quantity2
             except TypeError:
                 bid2_price = -99
                 bid2_quantity = -99
             try:
                 bid3_price = round(player.price3,2)
-                bid3_quantity = round(player.quantity3,2)
+                bid3_quantity = player.quantity3
             except TypeError:
                 bid3_price = -99
                 bid3_quantity = -99
             try:
                 bid4_price = round(player.price4, 2)
-                bid4_quantity = round(player.quantity4, 2)
+                bid4_quantity = player.quantity4
             except TypeError:
                 bid4_price = -99
                 bid4_quantity = -99
             try:
                 bid5_price = round(player.price5, 2)
-                bid5_quantity = round(player.quantity5, 2)
+                bid5_quantity = player.quantity5
             except TypeError:
                 bid5_price = -99
                 bid5_quantity = -99
             try:
                 bid6_price = round(player.price6, 2)
-                bid6_quantity = round(player.quantity6, 2)
+                bid6_quantity = player.quantity6
             except TypeError:
                 bid6_price = -99
                 bid6_quantity = -99
@@ -188,9 +203,9 @@ class ResultsWaitPage(WaitPage):
             full_response_set.extend(player_response_set_clean)
 
             # Total Number of Bids of each player
-            player_total_bid_number = 0
+            player_total_bid_number = int(0)
             for i in player_response_set_clean:
-                player_total_bid_number += i[3]
+                player_total_bid_number += int(i[3])
             player.player_total_bid_number = player_total_bid_number
 
             # Total bids amount of each player
@@ -294,6 +309,8 @@ class ResultsWaitPage(WaitPage):
         else:
             p4.additional_cost = 0
         p4.player_point_earning = round(group.point_for_earning * p4_quantity_purchased - p4.additional_cost, 2)
+
+
 
 
 class Results(Page):
