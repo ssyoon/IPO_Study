@@ -4,7 +4,7 @@ Instructions
 
 {{ block content }}
 
-    Group ID: {{ group.id_in_subsession }}
+    Group ID: {{ player.group.id_in_subsession }}
 
 <br>Thank you for coming to the experiment.
 This session is part of an experiment in the economics of decision-making.
@@ -27,27 +27,58 @@ If you have a question, please raise your hand and one of us will come to your d
 <p><b>The value of each unit of the goods equals one plus the number of high value signals received in your group.</b></p>
 </br>
 
-<p>
-    The decision you will make is to submit up to 6 bids.
-    Each bid is a price-quantity pair consisting of the price you would like to bid and the number of units you bid for at that price.
-    Prices cannot be negative.
-    The uninformed buyer can bid up to 80,000 units. Each of the informed buyers can bid up to 150,000 units.
-</p>
+{% if player.task_type == "Uniform" %}
+    <p>
+        The decision you will make is to submit up to 6 bids.
+        Each bid is a price-quantity pair consisting of the price you would like to bid and the number of units you bid for at that price.
+        Prices cannot be negative.
+        The uninformed buyer can bid up to 80,000 units. Each of the informed buyers can bid up to 150,000 units.
+    </p>
+{% else if player.task_type == "Fixed" %}
+    <p>
+        The decision you are asked to make is to submit the number of units you would like to bid for at the predetermined market price.
+        The uninformed buyer can bid up to 80,000 units.
+        Each of the informed buyers can bid up to 150,000 units.
+    </p>
+{% endif %}
 
+{{ if player.task_type == "Uniform" }}
 <p>
     When all the buyers submit the decisions, the seller will decide the market price and allocate the goods.
     The <b>Price and allocation rules</b> are as follows.
     If the total quantity bid for in your group is less than or equal to the quantity for sale (i.e.100,000 units), the market price will be zero.
     Each of you will be allocated the number of units you have submitted.
     If the total quantity bid for in your group exceeds the quantity for sale (100,000 units), the goods will be allotted from the highest bidding price to lower prices until all the units are allocated. The market price will be set as the highest bidding price where the cumulated units bid for exceed the quantity for sale. The quantity you have bid for above the market price will be fully allocated, those below the market price will be ignored, and those at the market price will be allocated proportionately to fully sell the goods (always rounded to integer).
-
 </p>
+{{ else if player.task_type == "Fixed" }}
+<p>
+    <b>Allocation rule</b>
+    When all the buyers submit the decisions, the seller will allocate the goods.
+    If the total quantity bid for in your group is less than or equal to the quantity for sale (100,000 units), you will be allocated the number of units you have submitted.
+    If the total quantity bid for exceeds the quantity for sale (100,000 units), the units of goods will be allocated proportionally among you and your competitors (always rounded to integer).
+</p>
+{{ endif }}
 
+
+
+
+
+{{ if player.task_type == "Uniform" }}
 <p>
 <p><b>Your payment</b></p>
     At the beginning of the experiment, there are 350,000 points in each informed buyer’s account, and 400,000 points in the uninformed buyer’s account.
     In each of the 20 rounds you can earn or lose points, which will be credited or debited to your account.
 </p>
+{{ else if player.task_type == "Fixed" }}
+<p>
+    At the beginning of the experiment, there are 100,000 points in each informed buyer’s account, and 150,000 points in the uninformed buyer’s account.
+    In each of the 20 rounds you can earn or lose points, which will be credited or debited to your account.
+</p>
+{{ endif }}
+
+
+
+
 
 <p>
     <b>Point earnings</b> (or losses) in each round, which are depending on both your and your competitors’ decisions, equal the per unit value minus the market price, multiplied by the number of units allocated to you.
@@ -70,9 +101,17 @@ If you have a question, please raise your hand and one of us will come to your d
 
 <p>
     <b>Information you will receive</b>
-    At the end of each round, you will be informed the results of that round including the units and the points obtained by you and your competitors, the total cumulated units placed at the market price, the per unit value and market price of the goods, and your total point earnings.
-    The results will be displayed for 30 seconds before the new round begins.
-    However, results of previous rounds can be checked from the “History” menu at any time during the session.
+<p>
+    {{ if player.task_type == "Uniform" }}
+        At the end of each round, you will be informed the results of that round including the units and the points obtained by you and your competitors, the total cumulated units placed at the market price, the per unit value and market price of the goods, and your total point earnings.
+        The results will be displayed for 30 seconds before the new round begins.
+        However, results of previous rounds can be checked from the “History” menu at any time during the session.
+    {{ else if player.task_type == "Fixed" }}
+        At the end of each round, you will be informed the results of that round including the units and the points obtained by you and your competitors, tthe total units bid for, the per unit value of the goods, and your total point earnings.
+        The results will be displayed for 30 seconds before the new round begins.
+        However, results of previous rounds can be checked from the “History” menu at any time during the session.
+    {{ endif }}
+</p>
 </p>
 
 <p>

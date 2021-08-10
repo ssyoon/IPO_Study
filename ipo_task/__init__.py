@@ -16,12 +16,14 @@ class Constants(BaseConstants):
     fixed_uninformed_endowment = 150000
     uniform_uninformed_max = 150000
     uniform_informed_max = 80000
+    task_list = ["Uniform", "Fixed"]
     signal_list = [
         random.choices(["Low", "High"], [20,20], k=20),
         random.choices(["Low", "High"], [20,20], k=20),
         random.choices(["Low", "High"], [20,20], k=20),
         ['Uninformed']*20
     ]
+
 
 
 class Subsession(BaseSubsession):
@@ -52,6 +54,7 @@ class Player(BasePlayer):
     attention_price_question = models.IntegerField(label="If in this round the players' bids are as those in the table below, what is the market price?")
     attention_allocation_question = models.IntegerField(label="If in this round the players' bids are as those in the table below, how many units player A will be allocated?")
     attention_earning_question = models.IntegerField(label="Suppose the value of each unit of the goods is 3, how many point earnings does Player A will obtain?")
+    task_type = models.StringField()
     price1 = models.FloatField(min=0, max=6)
     quantity1 = models.IntegerField(min=0)
     price2 = make_price_field()
@@ -86,6 +89,11 @@ class Instructions(Page):
             return True
         else:
             return player.participant.vars["failed_attention_check"]
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        task_type_index = player.group.id_in_subsession % 2
+        player.task_type = Constants.task_list[task_type_index]
 
 class AttentionCheck(Page):
     form_model = "player"
