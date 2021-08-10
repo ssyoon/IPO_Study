@@ -1,6 +1,7 @@
 import random
 from otree.api import *
 import numpy as np
+import random
 c = cu
 
 doc = ''
@@ -16,10 +17,10 @@ class Constants(BaseConstants):
     uniform_uninformed_max = 150000
     uniform_informed_max = 80000
     signal_list = [
-        ['Low', 'High'],
-        ['High', 'Low'],
-        ['Low', 'High'],
-        ['Uninformed', 'Uninformed']
+        random.choices(["Low", "High"], [20,20], k=20),
+        random.choices(["Low", "High"], [20,20], k=20),
+        random.choices(["Low", "High"], [20,20], k=20),
+        ['Uninformed']*20
     ]
 
 
@@ -47,6 +48,10 @@ def make_quantity_field():
 
 
 class Player(BasePlayer):
+    attention_value_question = models.IntegerField(label =  "If the number of good signals in this round is 2, what is the market value of each unit of the good?")
+    attention_price_question = models.IntegerField(label="If in this round the players' bids are as those in the table below, what is the market price?")
+    attention_allocation_question = models.IntegerField(label="If in this round the players' bids are as those in the table below, how many units player A will be allocated?")
+    attention_earning_question = models.IntegerField(label="Suppose the value of each unit of the goods is 3, how many point earnings does Player A will obtain?")
     price1 = models.FloatField(min=0, max=6)
     quantity1 = models.IntegerField(min=0)
     price2 = make_price_field()
@@ -73,6 +78,45 @@ class Player(BasePlayer):
 
     cumulative_quantity_above_market_price = models.FloatField()
     cumulative_quantity_at_market_price = models.FloatField()
+
+class Instructions(Page):
+    @staticmethod
+    def is_displayed(player: Player):
+        if player.round_number == 1:
+            return True
+        else:
+            return player.participant.vars["failed_attention_check"]
+
+class AttentionCheck(Page):
+    form_model = "player"
+    form_fields = ["attention_value_question", "attention_price_question", "attention_allocation_question", "attention_earning_question"]
+    @staticmethod
+    def is_displayed(player: Player):
+        if player.round_number == 1:
+            return True
+        else:
+            return player.participant.vars["failed_attention_check"]
+
+    @staticmethod
+    def before_next_page(player: Player, timeout_happened):
+        if player.attention_value_question == 3 and player.attention_price_question == 0 and player.attention_allocation_question == 15 and player.attention_earning_question == 45:
+            player.participant.vars["attention_check_success"] = True
+            player.participant.vars["failed_attention_check"] = False
+        else:
+            player.participant.vars["attention_check_success"] = False
+            player.participant.vars["failed_attention_check"] = True
+
+
+class AttentionCheckFailure(Page):
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.participant.vars["failed_attention_check"]
+
+
+class WaitForOtherPlayer(WaitPage):
+    @staticmethod
+    def after_all_players_arrive(group: Group):
+        pass
 
 
 
@@ -116,7 +160,6 @@ class Send(Page):
 
 
 class ResultsWaitPage(WaitPage):
-    #after_all_players_arrive = 'set_payoffs'
     @staticmethod
     def after_all_players_arrive(group: Group):
         # Initial variable settings
@@ -317,6 +360,7 @@ class Results(Page):
     pass
 
 class CombinedResults(Page):
+
     @staticmethod
     def is_displayed(player: Player):
         return player.round_number == Constants.num_rounds
@@ -334,4 +378,4 @@ class CombinedResults(Page):
 
 
 
-page_sequence = [Send, ResultsWaitPage, Results, CombinedResults]
+page_sequence = [Instructions, AttentionCheck, AttentionCheckFailure, WaitForOtherPlayer, Send, ResultsWaitPage, Results, CombinedResults]
