@@ -1,12 +1,26 @@
 {{ block title }}Your Result in This Round{{ endblock }}
 {{ block content }}
 
-<br>Market value in this round is {{ group.market_value }}</br>
- <br>Your quantity purchased this round is {{ player.player_quantity_purchased }}</br>
+Market value in this round is {{ group.market_value }}</br>
+Market price in this round is {{ group.market_price }}</br>
+Your quantity purchased at the market price in this round is {{ player.player_quantity_purchased }}</br>
+You earned a total of {{ player.player_point_earning }} points in this round.
 
-<p>
-</p>
-
+<h5>Other Players</h5>
+<table class = "table table-striped table-hover">
+    <thead>
+    <th>Participant</th>
+    <th>Quantity Purchased</th>
+    <th>Earning</th>
+    </thead>
+    {{ for p in player.get_others_in_group }}
+        <tr>
+            <td>{{ p.id_in_group }}</td>
+            <td>{{ p.player_quantity_purchased }}</td>
+            <td>{{ p.player_point_earning }}</td>
+        </tr>
+    {{ endfor }}
+</table>
 {{ next_button }}
 
 {{ endblock }}
