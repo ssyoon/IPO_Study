@@ -1,18 +1,21 @@
 {{ block title }}
-Instructions
+
 {{ endblock }}
 
 {{ block content }}
 
-    Group ID: {{ player.group.id_in_subsession }}
+<!-- INTRODUCTION -->
+<h1><b>Instructions</b></h1>
 
 <br>Thank you for coming to the experiment.
 This session is part of an experiment in the economics of decision-making.
 During the session, please do not talk or communicate with any of the other participants.
 If you have a question, please raise your hand and one of us will come to your desk to answer it.</br>
 
+
+<!-- DESCRIPTIONS OF EXPERIMENT -->
 <br>
-<br><b>Description of the experiment</b></br>
+<h2><b>Description of the experiment</b></h2>
     Each person in this room plays the role of a buyer.
     You are randomly paired with three other buyers in a group (the same three throughout the session).
     One buyer of your group is an uninformed buyer, and the other three are informed buyers.
@@ -23,64 +26,66 @@ If you have a question, please raise your hand and one of us will come to your d
     The number of units for sale is 100,000.
     At the beginning of the round, each informed buyer receives a signal revealing the value of the goods.
     The probability of observing either a high value or a low value signal is 50%.
-    The uninformed buyer does not receive a signal. No one knows the other buyers’ signals.
+    The uninformed buyer does not receive a signal. No one knows the other buyers’ signals.</p>
 <p><b>The value of each unit of the goods equals one plus the number of high value signals received in your group.</b></p>
-</br>
 
 {% if player.task_type == "Uniform" %}
-    <p>
         The decision you will make is to submit up to 6 bids.
         Each bid is a price-quantity pair consisting of the price you would like to bid and the number of units you bid for at that price.
         Prices cannot be negative.
         The uninformed buyer can bid up to 80,000 units. Each of the informed buyers can bid up to 150,000 units.
     </p>
 {% else if player.task_type == "Fixed" %}
-    <p>
         The decision you are asked to make is to submit the number of units you would like to bid for at the predetermined market price.
         The uninformed buyer can bid up to 80,000 units.
         Each of the informed buyers can bid up to 150,000 units.
-    </p>
+    </p></br>
 {% endif %}
 
+
+<!-- ALLOCATION RULES -->
 {{ if player.task_type == "Uniform" }}
 <p>
+    <h3><b>Allocation rule</b></h3>
     When all the buyers submit the decisions, the seller will decide the market price and allocate the goods.
     The <b>Price and allocation rules</b> are as follows.
     If the total quantity bid for in your group is less than or equal to the quantity for sale (i.e.100,000 units), the market price will be zero.
     Each of you will be allocated the number of units you have submitted.
     If the total quantity bid for in your group exceeds the quantity for sale (100,000 units), the goods will be allotted from the highest bidding price to lower prices until all the units are allocated. The market price will be set as the highest bidding price where the cumulated units bid for exceed the quantity for sale. The quantity you have bid for above the market price will be fully allocated, those below the market price will be ignored, and those at the market price will be allocated proportionately to fully sell the goods (always rounded to integer).
-</p>
+</p></br>
 {{ else if player.task_type == "Fixed" }}
 <p>
-    <b>Allocation rule</b>
+    <h3><b>Allocation rule</b></h3>
     When all the buyers submit the decisions, the seller will allocate the goods.
     If the total quantity bid for in your group is less than or equal to the quantity for sale (100,000 units), you will be allocated the number of units you have submitted.
     If the total quantity bid for exceeds the quantity for sale (100,000 units), the units of goods will be allocated proportionally among you and your competitors (always rounded to integer).
-</p>
+</p></br>
 {{ endif }}
 
 
 
-
+<!-- PAYMENT -->
 
 {{ if player.task_type == "Uniform" }}
 <p>
-<p><b>Your payment</b></p>
+    <h4><b>Your payment</b></h4>
     At the beginning of the experiment, there are 350,000 points in each informed buyer’s account, and 400,000 points in the uninformed buyer’s account.
     In each of the 20 rounds you can earn or lose points, which will be credited or debited to your account.
-</p>
+</p></br>
 {{ else if player.task_type == "Fixed" }}
 <p>
+    <h4><b>Your payment</b></h4>
     At the beginning of the experiment, there are 100,000 points in each informed buyer’s account, and 150,000 points in the uninformed buyer’s account.
     In each of the 20 rounds you can earn or lose points, which will be credited or debited to your account.
-</p>
+</p></br>
 {{ endif }}
 
 
 
-
+<!-- POINT EARNINGS AND LOSSES -->
 
 <p>
+    <h5><b>Point Earnings or Losses</b></h5>
     <b>Point earnings</b> (or losses) in each round, which are depending on both your and your competitors’ decisions, equal the per unit value minus the market price, multiplied by the number of units allocated to you.
     If you bid more than 100,000 units, you need to pay a cost of 5000 points.
 </p>
@@ -96,18 +101,18 @@ If you have a question, please raise your hand and one of us will come to your d
     Making unreasonable decisions may make your account balance negative.
     If you go bankrupt, you cannot continue participating in this experiment and will be paid only three pounds.
     By understanding the instructions and making decisions carefully, you may earn a considerable amount of money.
-</p>
+</p></br>
 
-
+<!-- PROVIDED INFORMATION -->
 <p>
-    <b>Information you will receive</b>
+    <h6><b>Information you will receive</b></h6>
 <p>
     {{ if player.task_type == "Uniform" }}
         At the end of each round, you will be informed the results of that round including the units and the points obtained by you and your competitors, the total cumulated units placed at the market price, the per unit value and market price of the goods, and your total point earnings.
         The results will be displayed for 30 seconds before the new round begins.
         However, results of previous rounds can be checked from the “History” menu at any time during the session.
     {{ else if player.task_type == "Fixed" }}
-        At the end of each round, you will be informed the results of that round including the units and the points obtained by you and your competitors, tthe total units bid for, the per unit value of the goods, and your total point earnings.
+        At the end of each round, you will be informed the results of that round including the units and the points obtained by you and your competitors, the total units bid for, the per unit value of the goods, and your total point earnings.
         The results will be displayed for 30 seconds before the new round begins.
         However, results of previous rounds can be checked from the “History” menu at any time during the session.
     {{ endif }}
@@ -126,21 +131,102 @@ If you have a question, please raise your hand and one of us will come to your d
 
 <p>
     Now please press the “Next” button and follow the prompts on your screen.
-</p>
+</p></br>
 
+<!-- ATTENTION CHECK QUESTIONS -->
+<h7><b>Attention Check Questions</b></h7>
 
 <p>Please answer the following question to make sure you understood the task.</p>
 
-<p>
+{{ if player.task_type == "Uniform" }}
+    Suppose there are 100 units for sale.
+    Player A plays with the other players.
+    Each player who bids for more than 100 units needs to pay a cost of 5 points. </br></br>
+{{ else if player.task_type == "Fixed" }}
     Suppose there are 100 units for sale.
     Player A plays with the other players.
     Each player who bids for more than 100 units needs to pay a cost of 5 points.
-</p>
+    The market price is predetermined as 2 points per unit. </br></br>
+{{ endif }}
 
 <p>Please answer the following questions:</p>
 
+{{ if player.task_type == "Uniform" }}
+    1. If the number of good signals in this round is 2, what is the market value of each unit of the good?
+    {{ form.attention_value_question }} </br>
+    If in this round the players' bids are as those in the table below, then: </br>
+    2. What is the market price?
+    {{ form.attention_price_question }} </br>
+    3. How many units is player A allocated?
+    {{ form.attention_allocation_question }} </br>
+    4. Suppose the value of each unit of the goods is 3, how many point earnings does player A obtain?
+    {{ form.attention_earning_question }} </br>
+{{ else if player.task_type == "Fixed" }}
+    1. If the number of good signals in this round is 2, what is the market value of each unit of the good?
+    {{ form.attention_value_question }} </br>
+    If in this round the numbers of units that players bid for are as below, then:</br>
+    2. How many units is player A allocated?
+    {{ form.attention_allocation_question }} </br>
+    3. Suppose the value of each unit of the goods is 3, how many point earnings does player A obtain?
+    {{ form.attention_earning_question }} </br>
+{{ formfield_errors 'attention_price_question' }}
+{{ formfield_errors 'attention_price_question' }}
+{{ endif }}
 
-{{ formfields }}
+{{ if player.task_type == "Uniform" }}
+<h1>Example Table</h1>
+<table class = "table table-striped table-hover">
+        <thead>
+            <th>Price</th>
+            <th>Player A</th>
+            <th>All Other Players</th>
+            <th> </th>
+            <th>Cumulative Units</th>
+        </thead>
+        <tr>
+            <td>4</td>
+            <td>5</td>
+            <td>40</td>
+            <td>5 + 40</td>
+            <td>45</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>0</td>
+            <td>10</td>
+            <td>45 + 0 + 10</td>
+            <td>55</td>
+        </tr>
+        <tr>
+            <td>0</td>
+            <td>10</td>
+            <td>20</td>
+            <td>55 + 10 + 20</td>
+            <td>85</td>
+        </tr>
+</table>
+{{ else if player.tas_type == "Fixed" }}
+<h1>Example Table</h1>
+<table class = "table table-striped table-hover">
+        <tr>
+            <td>Player A Bids</td>
+            <td>120</td>
+        </tr>
+        <tr>
+            <td>All Other Players Bid</td>
+            <td>360</td>
+        </tr>
+</table>
+{{ endif }}
+
 {{ next_button }}
 
 {{ endblock }}
+
+<!-- CSS STYLE-->
+<style type="text/css">
+    body{font-family: Verdana; font-size: 15pt; line-height: 1.5}
+    /* Headers */
+    h1{font-size: 20pt; color: blue;}
+    h2,h3,h4,h5,h6,h7{font-size: 18pt; color: blue;}
+</style>

@@ -2,25 +2,33 @@
 {{ block content }}
 
 <br>
-<br>There are 20 rounds in this session, and the current round is {{ player.round_number }}</br>
+<br>There are 20 rounds in this session, and <b>the current round is {{ player.round_number }}</b></br>
 
-<br>The number of units for sale this round: {{ Constants.total_share }}</br>
+<br>The number of units for sale this round: <b>{{ Constants.total_share }}</b></br>
 
-<br>Please enter at least one bid. You may bid for up to {{ player.max_quantity }} units,
+<br>Please enter at least one bid. You may bid for <b>up to {{ player.max_quantity }} units</b>,
     and bids over this limit will be disregarded (they will be registered in the order you enter them on this page)</br>
 
-<br>You are Participant {{ player.id_in_group }}. You were initially endowed {{ player.starting_budget }},
-    and your current budget is {{ player.current_budget }}</br>
+<br>You are <b>Participant {{ player.id_in_group }}</b>. You were initially endowed <b>{{ player.starting_budget }}</b>,
+    and your current budget is <b>{{ player.current_budget }}</b></br>
 
-<br>Your market signal is {{ player.market_signal }}</br>
+<br>Your market signal is <b>{{ player.market_signal }}</b></br>
 
-<br>The market price is {{ Constants.fixed_market_price }}</br>
+<br>The market price is <b>{{ Constants.fixed_market_price }}</b></br></br>
 
-
-<p>The quantity that you would like to bid for at the market price is {{ form.fixed_quantity }} units.</p>
-
-<br></br>
+<p><b> How many quantity (units) would you like to bid for at the market price?</b></p>
+{{ form.fixed_quantity }} </br>
 
 <button class="otree-btn-next btn btn-primary">Submit</button>
 
 {{ endblock }}
+
+
+<!-- CSS STYLE-->
+<style type="text/css">
+    body{font-family: Verdana; font-size: 15pt; line-height: 1.5}
+    /* Headers */
+    h1{font-size: 20pt; color: blue;}
+    h2,h3,h4,h5,h6,h7{font-size: 18pt; color: blue;}
+    p.accent{color: blue}
+</style>
