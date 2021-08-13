@@ -2,6 +2,9 @@ import random
 from otree.api import *
 import numpy as np
 import random
+import math
+import pandas as pd
+
 c = cu
 
 doc = ''
@@ -85,6 +88,8 @@ class Player(BasePlayer):
     max_quantity = models.FloatField()
     cumulative_quantity_above_market_price = models.FloatField()
     cumulative_quantity_at_market_price = models.FloatField()
+    round_end_budget_left = models.FloatField()
+    final_dollar_amount = models.FloatField()
 
 
 ## Page1: Instructions ===============================================
@@ -368,6 +373,7 @@ class ResultsWaitPageUniform(WaitPage):
             else:
                 player.additional_cost = 0
             player.player_point_earning = round(group.point_for_earning * player.player_quantity_purchased - player.additional_cost, 2)
+            player.round_end_budget_left = player.current_budget + player.player_point_earning
 
 
 
@@ -405,19 +411,29 @@ class ResultsWaitPageFixed(WaitPage):
                 else:
                     player.additional_cost = 0
             elif player.group.total_bid_number > Constants.total_share:
-                player.player_quantity_purchased = round(Constants.total_share * (player.fixed_quantity / total_bid_number))
+                player.player_quantity_purchased = int(round(Constants.total_share * (player.fixed_quantity / total_bid_number)))
                 if player.fixed_quantity > 100000:
                     player.additional_cost = 5000
                 else:
                     player.additional_cost = 0
 
             # Point Earning
-            player.player_point_earning = (player.player_quantity_purchased * group.point_for_earning) - player.additional_cost
+            player.player_point_earning = round((player.player_quantity_purchased * group.point_for_earning) - player.additional_cost, 2)
+            player.round_end_budget_left = player.current_budget + player.player_point_earning
 
 
 class Results(Page):
-    timeout_seconds = 60
-    timer_text = 'You will be automatically forward to the next page in'
+    timeout_seconds = 30
+    timer_text = 'You will be automatically forwarded to the next page in'
+
+    @staticmethod
+    def js_vars(player: Player):
+        player_responses_so_far = [i.player_point_earning for i in player.in_all_rounds()]
+        all_round_numbers = [i.round_number for i in player.in_all_rounds()]
+        return dict(player_results_so_far = player_responses_so_far,
+                    all_round_numbers_so_far = all_round_numbers)
+
+
 
 class CombinedResults(Page):
 
@@ -427,13 +443,19 @@ class CombinedResults(Page):
 
     @staticmethod
     def vars_for_template(player: Player):
-        all_rounds = player.in_all_rounds()
+        #all_rounds = player.in_all_rounds()
         combined_payoff = 0
-        final_points = all_rounds[-1].current_budget + all_rounds[-1].player_point_earning
-        for p in all_rounds:
-            combined_payoff += p.payoff
+        #final_points = all_rounds[-1].current_budget + all_rounds[-1].player_point_earning
+        final_points = player.round_end_budget_left
+        final_dollar_amount_temp = math.ceil(final_points / 250)
+
+        #FINAL DOLLAR AMOUNT ===============================
+        if final_dollar_amount_temp > 3:
+            player.final_dollar_amount = final_dollar_amount_temp
+        elif final_dollar_amount_temp <= 3:
+            player.final_dollar_amount = 3
         return {
-            "combined_payoff": final_points
+            "combined_payoff": player.final_dollar_amount
         }
 
 

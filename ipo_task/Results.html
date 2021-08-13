@@ -9,8 +9,6 @@
 
 <p>You earned a total of {{ player.player_point_earning }} points in this round.</p>
 
-
-
 <!-- All Bids of the Player in this Round -->
 <h5>Your Bid This Round</h5>
 
@@ -48,7 +46,33 @@
     {{ endfor }}
 </table>
 
+<div id="main">
+    <button type="button" onclick="check_result()">Check Your Previous Results</button>
+    <button type="button" onclick="check_instruction()">Check Instructions</button>
+</div>
+<div id="additional"></div>
+
+{{ next_button }}
 {{ endblock }}
+
+
+<!-- # Javascript Block -->
+{% block scripts %}
+    <script>
+        function check_result() {
+            var player_bid_print = js_vars.player_results_so_far;
+            var player_round_print = js_vars.all_round_numbers_so_far;
+            document.getElementById("additional").innerHTML = "";
+            for (let i = 0; i < player_bid_print.length; i++) {
+                document.getElementById("additional").innerHTML += "<br>" + ("In Round " + player_round_print[i] + ", your Earning was " + player_bid_print[i]) + "<br>";
+            }
+        };
+
+        function check_instruction() {
+            document.getElementById("additional").innerHTML = "<br>" + "Earn as many points as possible!";
+        }
+    </script>
+{% endblock %}
 
 
 <!-- CSS STYLE-->
@@ -59,3 +83,5 @@
     h2,h3,h4,h5,h6,h7{font-size: 18pt; color: blue;}
 
 </style>
+
+
