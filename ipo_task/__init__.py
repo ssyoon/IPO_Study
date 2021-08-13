@@ -8,8 +8,8 @@ c = cu
 
 doc = ''
 class Constants(BaseConstants):
-    players_per_group = 2
-    num_rounds = 2
+    players_per_group = 4
+    num_rounds = 3
     name_in_url = 'IPO_Study'
     total_share = 100000
     fixed_market_price = 1.94
@@ -17,11 +17,11 @@ class Constants(BaseConstants):
     uniform_uninformed_endowment = 400000
     fixed_informed_endowment = 100000
     fixed_uninformed_endowment = 150000
-    uniform_uninformed_max = 150000
-    uniform_informed_max = 80000
-    fixed_uninformed_max = 150000
-    fixed_informed_max = 80000
-    task_list = ["Uniform", "Fixed"]
+    uniform_uninformed_max = 80000
+    uniform_informed_max = 150000
+    fixed_uninformed_max = 80000
+    fixed_informed_max = 150000
+    task_list = ["Uniform", "Uniform"]
     signal_list = [
         # Set 1
         [random.choices(["Low", "High"], [20,20], k=20),
@@ -125,7 +125,7 @@ class Instructions(Page):
             else:
                 return "You submitted wrong answers or did not complete all questions. Please provide correct answers. If you want to read the instructions again, please go back to the previou spage"
         elif player.task_type == "Fixed":
-            if values["attention_value_question"] == 3 and values["attention_allocation_question"] == 25 and values["attention_earning_question"] == 115:
+            if values["attention_value_question"] == 3 and values["attention_allocation_question"] == 25 and values["attention_earning_question"] == 20:
                 pass
             else:
                 return "You submitted wrong answers or did not complete all questions. Please provide correct answers. If you want to read the instructions again, please go back to the previou spage"
@@ -214,7 +214,8 @@ class UniformBid(Page):
     # Custom Validation
     @staticmethod
     def error_message(player: Player, values):
-        player_signal_in_game = Constants.signal_list[player.id_in_group-1][player.round_number-1]
+        signal_list_index = player.group.id_in_subsession % 10
+        player_signal_in_game = Constants.signal_list[signal_list_index-1][player.id_in_group-1][player.round_number-1]
         all_response_list = [[values['price1'], values['quantity1']],
                              [values['price2'], values['quantity2']],
                              [values['price3'], values['quantity3']],
@@ -371,12 +372,12 @@ class ResultsWaitPageUniform(WaitPage):
                     p4_quantity_purchased += round((Constants.total_share - cumulative_quantity_above_market_price) * (i[3]/total_at_market_price))
             p1 = group.get_player_by_id(1)
             p2 = group.get_player_by_id(2)
-            #p3 = group.get_player_by_id(3)
-            #p4 = group.get_player_by_id(4)
+            p3 = group.get_player_by_id(3)
+            p4 = group.get_player_by_id(4)
             p1.player_quantity_purchased = int(p1_quantity_purchased)
             p2.player_quantity_purchased = int(p2_quantity_purchased)
-            #p3.player_quantity_purchased = p3_quantity_purchased
-            #p4.player_quantity_purchased = p4_quantity_purchased
+            p3.player_quantity_purchased = p3_quantity_purchased
+            p4.player_quantity_purchased = p4_quantity_purchased
 
         # Penalty for bidding more than 100,000 and Purchased Quantity and Amount
         for player in group.get_players():
@@ -435,8 +436,8 @@ class ResultsWaitPageFixed(WaitPage):
 
 
 class Results(Page):
-    #timeout_seconds = 30
-    #timer_text = 'You will be automatically forwarded to the next page in'
+    timeout_seconds = 30
+    timer_text = 'You will be automatically forwarded to the next page in'
 
     @staticmethod
     def js_vars(player: Player):
@@ -478,4 +479,4 @@ class CombinedResults(Page):
 
 
 
-page_sequence = [Instructions, FixedBid, UniformBid, ResultsWaitPageUniform, ResultsWaitPageFixed, Results, CombinedResults]
+page_sequence = [Instructions, UniformBid, ResultsWaitPageUniform, Results, CombinedResults]
