@@ -3,7 +3,6 @@ from otree.api import *
 import numpy as np
 import random
 import math
-import pandas as pd
 
 c = cu
 
