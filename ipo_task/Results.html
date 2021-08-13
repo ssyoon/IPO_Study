@@ -13,8 +13,10 @@
 <h5>Your Bid This Round</h5>
 
 {{ if player.task_type == "Fixed" }}
+    You are player {{ player.id_in_group }} <br>
     You submitted {{ player.fixed_quantity }} units at the market price {{ group.market_price }}. </br></br>
 {{ else if player.task_type == "Uniform" }}
+    You are player {{ player.id_in_group }} <br>
     <table class = "table table-striped table-hover">
         <thead>
         <th>Bid</th>
@@ -52,12 +54,15 @@
 </div>
 <div id="additional"></div>
 
+{{ next_button }}
+
 {{ endblock }}
 
 
 <!-- # Javascript Block -->
 {% block scripts %}
     <script>
+        // Fuction 1: Function for showing the result of previous rounds ==================
         function check_result() {
             var player_bid_print = js_vars.player_results_so_far;
             var player_round_print = js_vars.all_round_numbers_so_far;
@@ -67,9 +72,16 @@
             }
         };
 
+        // Fuction 2: Instruction Fuction ==================
         function check_instruction() {
-            document.getElementById("additional").innerHTML = "<br>" + "Earn as many points as possible!";
+            if (js_vars.task_of_player == "Fixed") {
+                document.getElementById("additional").innerHTML = "<br>" + js_vars.fixed_ins_text;
+            } else if (js_vars.task_of_player == "Uniform") {
+                document.getElementById("additional").innerHTML = "<br>" + js_vars.uniform_ins_text;
+            }
+
         }
+
     </script>
 {% endblock %}
 
@@ -82,5 +94,3 @@
     h2,h3,h4,h5,h6,h7{font-size: 18pt; color: blue;}
 
 </style>
-
-

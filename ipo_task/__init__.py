@@ -3,7 +3,7 @@ from otree.api import *
 import numpy as np
 import random
 import math
-
+random.seed(2021)
 c = cu
 
 doc = ''
@@ -23,10 +23,21 @@ class Constants(BaseConstants):
     fixed_informed_max = 80000
     task_list = ["Uniform", "Fixed"]
     signal_list = [
+        # Set 1
+        [random.choices(["Low", "High"], [20,20], k=20),
         random.choices(["Low", "High"], [20,20], k=20),
         random.choices(["Low", "High"], [20,20], k=20),
-        random.choices(["Low", "High"], [20,20], k=20),
-        ['Uninformed']*20
+        ['Uninformed']*20],
+        # Set 2
+        [random.choices(["Low", "High"], [20, 20], k=20),
+         random.choices(["Low", "High"], [20, 20], k=20),
+         random.choices(["Low", "High"], [20, 20], k=20),
+         ['Uninformed'] * 20],
+        # Set 3
+        [random.choices(["Low", "High"], [20, 20], k=20),
+         random.choices(["Low", "High"], [20, 20], k=20),
+         random.choices(["Low", "High"], [20, 20], k=20),
+         ['Uninformed'] * 20]
     ]
 
 
@@ -158,7 +169,8 @@ class FixedBid(Page):
                 player.starting_budget = Constants.fixed_informed_endowment
 
         # MARKET SIGNAL OF THE PLAYER IN THE ROUND
-        player.market_signal = Constants.signal_list[player.id_in_group - 1][player.round_number - 1]
+        signal_list_index = player.group.id_in_subsession % 10
+        player.market_signal = Constants.signal_list[signal_list_index][player.id_in_group - 1][player.round_number - 1]
 
 
 ## Page2B: Uniform Condition ===============================================
@@ -195,7 +207,8 @@ class UniformBid(Page):
                 player.starting_budget = Constants.uniform_informed_endowment
 
         # MARKET SIGNAL OF THE PLAYER IN THE ROUND
-        player.market_signal = Constants.signal_list[player.id_in_group - 1][player.round_number - 1]
+        signal_list_index = player.group.id_in_subsession % 10
+        player.market_signal = Constants.signal_list[signal_list_index-1][player.id_in_group - 1][player.round_number - 1]
 
 
     # Custom Validation
@@ -422,15 +435,20 @@ class ResultsWaitPageFixed(WaitPage):
 
 
 class Results(Page):
-    timeout_seconds = 30
-    timer_text = 'You will be automatically forwarded to the next page in'
+    #timeout_seconds = 30
+    #timer_text = 'You will be automatically forwarded to the next page in'
 
     @staticmethod
     def js_vars(player: Player):
         player_responses_so_far = [i.player_point_earning for i in player.in_all_rounds()]
         all_round_numbers = [i.round_number for i in player.in_all_rounds()]
+        uniform_ins_file = open("uniform_instruction.txt", "r")
+        fixed_ins_file = open("uniform_instruction.txt", "r")
         return dict(player_results_so_far = player_responses_so_far,
-                    all_round_numbers_so_far = all_round_numbers)
+                    all_round_numbers_so_far = all_round_numbers,
+                    uniform_ins_text = uniform_ins_file.read(),
+                    fixed_ins_text = fixed_ins_file.read(),
+                    task_of_player = player.task_type)
 
 
 

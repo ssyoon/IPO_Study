@@ -1,0 +1,68 @@
+<!-- INTRODUCTION -->
+<h1><b>Description of the experiment</b><br></h1>
+
+<p>
+person in this room plays the role of a buyer.
+You are randomly paired with three other buyers in a group (the same three throughout the session).
+One buyer of your group is an uninformed buyer, and the other three are informed buyers.
+The status of each of you as an informed or uninformed buyer remains the same in the session.
+You will not know which of the participants are in your group.
+The session consists of 20 rounds, each of which is structured as follows.
+The computer takes the role of the seller.
+The number of units for sale is 100,000.
+At the beginning of the round, each informed buyer receives a signal revealing the value of the goods.
+The probability of observing either a high value or a low value signal is 50%.
+The uninformed buyer does not receive a signal. No one knows the other buyers’ signals.
+<b> </b><br>
+<br><b>The value of each unit of the goods equals one plus the number of high value signals received in your group.</b></br>
+</p>
+
+<p><b>The decision you are asked to make is to submit the number of units you would like to bid for at the predetermined market price.
+The uninformed buyer can bid up to 80,000 units.
+Each of the informed buyers can bid up to 150,000 units.<br></p></b>
+
+
+<h3><b>Allocation rule</b></h3>
+When all the buyers submit the decisions, the seller will allocate the goods.
+If the total quantity bid for in your group is less than or equal to the quantity for sale (100,000 units), you will be allocated the number of units you have submitted.
+If the total quantity bid for exceeds the quantity for sale (100,000 units), the units of goods will be allocated proportionally among you and your competitors (always rounded to integer).
+
+
+<h4><b>Your payment</b></h4>
+At the beginning of the experiment, there are 100,000 points in each informed buyer’s account, and 150,000 points in the uninformed buyer’s account.
+In each of the 20 rounds you can earn or lose points, which will be credited or debited to your account.
+
+
+
+
+<p>
+
+    <h5><b>Point Earnings or Losses</b></h5></br>
+    <b>Point earnings</b> (or losses) in each round, which are depending on both your and your competitors’ decisions, equal the per unit value minus the market price, multiplied by the number of units allocated to you.
+    If you bid more than 100,000 units, you need to pay a cost of 5000 points.
+</p>
+
+
+<p>
+    At the end of the session, the total points on your account will be converted into pounds and be paid to you in cash.
+    The exchange rate will be 250 points = 1p.
+    The more points you have, the more money you will earn.
+</p>
+<p>
+    In our research, we are interested in what will happen if everybody tries to earn as many points as possible.
+    Making unreasonable decisions may make your account balance negative.
+    If you go bankrupt, you cannot continue participating in this experiment and will be paid only three pounds.
+    By understanding the instructions and making decisions carefully, you may earn a considerable amount of money.
+</p></br></br></br></br>
+
+
+
+
+
+
+<h6><b>Information you will receive</b></h6>
+
+
+At the end of each round, you will be informed the results of that round including the units and the points obtained by you and your competitors, the total units bid for, the per unit value of the goods, and your total point earnings.
+The results will be displayed for 30 seconds before the new round begins.
+However, results of previous rounds can be checked from the “History” menu at any time during the session.
