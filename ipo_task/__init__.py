@@ -441,7 +441,8 @@ class Results(Page):
 
     @staticmethod
     def js_vars(player: Player):
-        player_responses_so_far = [i.player_point_earning for i in player.in_all_rounds()]
+        player_price1_so_far = [i.price1 for i in player.in_all_rounds()]
+        player_quantity1_so_far = [i.quantity1 for i in player.in_all_rounds()]
         all_round_numbers = [i.round_number for i in player.in_all_rounds()]
         uniform_ins_file = open("uniform_instruction.txt", "r")
         fixed_ins_file = open("uniform_instruction.txt", "r")
@@ -449,7 +450,9 @@ class Results(Page):
                     all_round_numbers_so_far = all_round_numbers,
                     uniform_ins_text = uniform_ins_file.read(),
                     fixed_ins_text = fixed_ins_file.read(),
-                    task_of_player = player.task_type)
+                    task_of_player = player.task_type,
+                    player_price1_so_far = player_price1_so_far,
+                    player_quantity1_so_far = player_quantity1_so_far)
 
 
 
