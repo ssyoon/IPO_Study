@@ -73,4 +73,57 @@
 
 <button class="otree-btn-next btn btn-primary">Submit</button>
 
+<div id="main">
+    <button type="button" onclick="check_result()">History</button>
+    <button type="button" onclick="example_case()">Help</button>
+    <button type="button" onclick="check_instruction()">Check Instructions</button>
+</div>
+<div id="additional"></div>
+
 {{ endblock }}
+
+
+<!-- # Javascript Block -->
+{% block scripts %}
+    <script>
+        // Fuction 1: Function for showing the result of previous rounds ==================
+        function check_result() {
+            var player_bid_print = js_vars.player_results_so_far;
+            var player_round_print = js_vars.all_round_numbers_so_far;
+            document.getElementById("additional").innerHTML = "";
+            for (let i = 0; i < player_bid_print.length; i++) {
+                if (js_vars.this_round_number == 1) {
+                    document.getElementById("additional").innerHTML += player_bid_print[i] + "<br>";
+                } else {
+                    document.getElementById("additional").innerHTML += "<br>" + ("In Round " + player_round_print[i] + ", your Earning was " + player_bid_print[i]) + "<br>";
+                }
+            }
+        };
+
+        // Fuction 2: Instruction Fuction ==================
+        function check_instruction() {
+            if (js_vars.task_of_player == "Fixed") {
+                document.getElementById("additional").innerHTML = "<br>" + js_vars.fixed_ins_text;
+            } else if (js_vars.task_of_player == "Uniform") {
+                document.getElementById("additional").innerHTML = "<br>" + js_vars.uniform_ins_text;
+            }
+        }
+
+        // Fuction 3: Help (Example Case) Function ==================
+        function example_case() {
+            document.getElementById("additional").innerHTML = '';
+            if (js_vars.task_of_player == "Fixed") {
+                document.getElementById("additional").innerHTML = "random type";
+            } else if (js_vars.task_of_player == "Uniform") {
+                var div = document.createElement('div');
+                var image = document.createElement('img');
+                image.setAttribute('src', "{{ static 'ExampleCase.pdf' }}");
+                div.appendChild(image)
+                if (div.lastChild) {
+                    document.getElementById('additional').appendChild(div);
+                }
+            }
+        }
+
+    </script>
+{% endblock %}

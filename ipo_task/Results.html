@@ -50,6 +50,7 @@
 
 <div id="main">
     <button type="button" onclick="check_result()">History</button>
+    <button type="button" onclick="example_case()">Help</button>
     <button type="button" onclick="check_instruction()">Check Instructions</button>
 </div>
 <div id="additional"></div>
@@ -78,6 +79,20 @@
                 document.getElementById("additional").innerHTML = "<br>" + js_vars.fixed_ins_text;
             } else if (js_vars.task_of_player == "Uniform") {
                 document.getElementById("additional").innerHTML = "<br>" + js_vars.uniform_ins_text;
+            }
+
+        }
+
+        // Fuction 3: Help (Example Case) Function ==================
+        function example_case() {
+            if (js_vars.task_of_player == "Fixed") {
+                document.getElementById("additional").innerHTML = "random type";
+            } else if (js_vars.task_of_player == "Uniform") {
+                var div = document.createElement('div');
+                var image = document.createElement('img');
+                image.setAttribute('src', "{{ static 'ExampleCase.pdf' }}");
+                div.appendChild(image)
+                document.getElementById('additional').appendChild(div);
             }
 
         }

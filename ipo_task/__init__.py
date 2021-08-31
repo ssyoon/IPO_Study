@@ -230,6 +230,22 @@ class UniformBid(Page):
             if total_submitted_quantity > Constants.uniform_informed_max:
                 return "You submitted " + str(total_submitted_quantity) + " which is above the maximum possible bid quantity " + str(Constants.uniform_informed_max)
 
+    @staticmethod
+    def js_vars(player: Player):
+        if player.round_number == 1:
+            player_responses_so_far = ["This is Round 1"]
+        else:
+            player_responses_so_far = [i.player_point_earning for i in player.in_all_rounds()]
+        all_round_numbers = [i.round_number for i in player.in_all_rounds()]
+        uniform_ins_file = open("uniform_instruction.txt", "r")
+        fixed_ins_file = open("uniform_instruction.txt", "r")
+        return dict(player_results_so_far=player_responses_so_far,
+                    all_round_numbers_so_far=all_round_numbers,
+                    uniform_ins_text=uniform_ins_file.read(),
+                    fixed_ins_text=fixed_ins_file.read(),
+                    task_of_player=player.task_type,
+                    this_round_number = player.round_number)
+
 
 # Page3: Result Page_Uniform =======================================================================
 class ResultsWaitPageUniform(WaitPage):
@@ -441,6 +457,7 @@ class Results(Page):
 
     @staticmethod
     def js_vars(player: Player):
+        player_responses_so_far = [i.player_point_earning for i in player.in_all_rounds()]
         player_price1_so_far = [i.price1 for i in player.in_all_rounds()]
         player_quantity1_so_far = [i.quantity1 for i in player.in_all_rounds()]
         all_round_numbers = [i.round_number for i in player.in_all_rounds()]
