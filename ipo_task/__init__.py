@@ -3,7 +3,7 @@ from otree.api import *
 import numpy as np
 import random
 import math
-random.seed(2021)
+random.seed(2021) # Seed Number for Randomization
 c = cu
 
 doc = ''
@@ -131,7 +131,7 @@ class Instructions(Page):
                 return "You submitted wrong answers or did not complete all questions. Please provide correct answers. If you want to read the instructions again, please go back to the previou spage"
 
 
-
+## Wait Page to Group Participants (This page will be run before the instruction page; players can see the instruction when they are paired with the other three)
 class WaitForOtherPlayer(WaitPage):
     group_by_arrival_time = True
 
@@ -235,7 +235,7 @@ class UniformBid(Page):
                 return "You submitted " + str(total_submitted_quantity) + " which is above the maximum possible bid quantity " + str(Constants.uniform_informed_max)
 
     @staticmethod
-    def js_vars(player: Player):
+    def js_vars(player: Player): # Creating Variables for the JavaScript in the Page
         if player.round_number == 1:
             player_responses_so_far = ["This is Round 1"]
         else:
