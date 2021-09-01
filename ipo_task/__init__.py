@@ -135,6 +135,10 @@ class Instructions(Page):
 class WaitForOtherPlayer(WaitPage):
     group_by_arrival_time = True
 
+    @staticmethod
+    def is_displayed(player):
+        return player.round_number == 1
+
 
 ## Page2A: Fixed Condition ===============================================
 class FixedBid(Page):
@@ -235,7 +239,7 @@ class UniformBid(Page):
         if player.round_number == 1:
             player_responses_so_far = ["This is Round 1"]
         else:
-            player_responses_so_far = [i.player_point_earning for i in player.in_all_rounds()]
+            player_responses_so_far = [i.player_point_earning for i in player.in_previous_rounds()]
         all_round_numbers = [i.round_number for i in player.in_all_rounds()]
         uniform_ins_file = open("uniform_instruction.txt", "r")
         fixed_ins_file = open("uniform_instruction.txt", "r")
@@ -392,8 +396,8 @@ class ResultsWaitPageUniform(WaitPage):
             p4 = group.get_player_by_id(4)
             p1.player_quantity_purchased = int(p1_quantity_purchased)
             p2.player_quantity_purchased = int(p2_quantity_purchased)
-            p3.player_quantity_purchased = p3_quantity_purchased
-            p4.player_quantity_purchased = p4_quantity_purchased
+            p3.player_quantity_purchased = int(p3_quantity_purchased)
+            p4.player_quantity_purchased = int(p4_quantity_purchased)
 
         # Penalty for bidding more than 100,000 and Purchased Quantity and Amount
         for player in group.get_players():
@@ -499,4 +503,4 @@ class CombinedResults(Page):
 
 
 
-page_sequence = [Instructions, UniformBid, ResultsWaitPageUniform, Results, CombinedResults]
+page_sequence = [WaitForOtherPlayer, Instructions, UniformBid, ResultsWaitPageUniform, Results, CombinedResults]
