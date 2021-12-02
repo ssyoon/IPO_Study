@@ -21,7 +21,7 @@ class Constants(BaseConstants):
     uniform_informed_max = 150000
     fixed_uninformed_max = 80000
     fixed_informed_max = 150000
-    task_list = ["Uniform", "Uniform"]
+    task_list = ["Uniform", "Uniform"] # we only run the Uniform condition
     signal_list = [
         # Set 1
         [random.choices(["Low", "High"], [20,20], k=20),
@@ -37,9 +37,43 @@ class Constants(BaseConstants):
         [random.choices(["Low", "High"], [20, 20], k=20),
          random.choices(["Low", "High"], [20, 20], k=20),
          random.choices(["Low", "High"], [20, 20], k=20),
+         ['Uninformed'] * 20],
+        # Set 4
+        [random.choices(["Low", "High"], [20, 20], k=20),
+         random.choices(["Low", "High"], [20, 20], k=20),
+         random.choices(["Low", "High"], [20, 20], k=20),
+         ['Uninformed'] * 20],
+        # Set 5
+        [random.choices(["Low", "High"], [20, 20], k=20),
+         random.choices(["Low", "High"], [20, 20], k=20),
+         random.choices(["Low", "High"], [20, 20], k=20),
+         ['Uninformed'] * 20],
+        # Set 6
+        [random.choices(["Low", "High"], [20, 20], k=20),
+         random.choices(["Low", "High"], [20, 20], k=20),
+         random.choices(["Low", "High"], [20, 20], k=20),
+         ['Uninformed'] * 20],
+        # Set 7
+        [random.choices(["Low", "High"], [20, 20], k=20),
+         random.choices(["Low", "High"], [20, 20], k=20),
+         random.choices(["Low", "High"], [20, 20], k=20),
+         ['Uninformed'] * 20],
+        # Set 8
+        [random.choices(["Low", "High"], [20, 20], k=20),
+         random.choices(["Low", "High"], [20, 20], k=20),
+         random.choices(["Low", "High"], [20, 20], k=20),
+         ['Uninformed'] * 20],
+        # Set 9
+        [random.choices(["Low", "High"], [20, 20], k=20),
+         random.choices(["Low", "High"], [20, 20], k=20),
+         random.choices(["Low", "High"], [20, 20], k=20),
+         ['Uninformed'] * 20],
+        # Set 10
+        [random.choices(["Low", "High"], [20, 20], k=20),
+         random.choices(["Low", "High"], [20, 20], k=20),
+         random.choices(["Low", "High"], [20, 20], k=20),
          ['Uninformed'] * 20]
-    ]
-
+    ] # a set of list of signals (10 sets)
 
 
 class Subsession(BaseSubsession):
@@ -100,6 +134,8 @@ class Player(BasePlayer):
     cumulative_quantity_at_market_price = models.FloatField()
     round_end_budget_left = models.FloatField()
     final_dollar_amount = models.FloatField()
+    is_default = models.IntegerField(initial=0) # this variable is to track the player's bankrupcy status
+    is_default_next_round = models.IntegerField()
 
 
 ## Page1: Instructions ===============================================
@@ -140,51 +176,14 @@ class WaitForOtherPlayer(WaitPage):
         return player.round_number == 1
 
 
-## Page2A: Fixed Condition ===============================================
-class FixedBid(Page):
-    form_model = 'player'
-    form_fields = ['fixed_quantity']
-
-    @staticmethod
-    def is_displayed(player: Player):
-        if player.in_round(1).task_type == "Fixed":
-            return True
-
-    @staticmethod
-    def vars_for_template(player: Player):
-        if player.round_number == 1: # First Round
-            if player.id_in_group == 4: # UNINFORMED condition
-                player.starting_budget = Constants.fixed_uninformed_endowment
-                player.current_budget = Constants.fixed_uninformed_endowment
-                player.max_quantity = Constants.fixed_uninformed_max
-            else: # INFORMED condition
-                player.starting_budget = Constants.fixed_informed_endowment
-                player.current_budget = Constants.fixed_informed_endowment
-                player.max_quantity = Constants.fixed_informed_max
-        elif player.round_number != 1: # Other Rounds
-            player.task_type = player.in_round(1).task_type
-            previous_round = player.in_round(player.round_number - 1)
-            player.current_budget = previous_round.current_budget + previous_round.player_point_earning
-            if player.id_in_group == 4: # UNINFORMED condition
-                player.max_quantity = Constants.fixed_uninformed_max
-                player.starting_budget = Constants.fixed_uninformed_endowment
-            else: # INFORMED condition
-                player.max_quantity = Constants.fixed_informed_max
-                player.starting_budget = Constants.fixed_informed_endowment
-
-        # MARKET SIGNAL OF THE PLAYER IN THE ROUND
-        signal_list_index = player.group.id_in_subsession % 10
-        player.market_signal = Constants.signal_list[signal_list_index][player.id_in_group - 1][player.round_number - 1]
-
-
-## Page2B: Uniform Condition ===============================================
+## Page2A: Uniform Condition ===============================================
 class UniformBid(Page):
     form_model = 'player'
     form_fields = ['price1', 'quantity1', 'price2', 'quantity2', 'price3', 'quantity3', 'price4', 'quantity4', 'price5', 'quantity5', 'price6', 'quantity6']
 
     @staticmethod
     def is_displayed(player: Player):
-        if player.in_round(1).task_type == "Uniform":
+        if player.in_round(1).task_type == "Uniform" and player.is_default == 0:
             return True
 
     @staticmethod
@@ -203,6 +202,8 @@ class UniformBid(Page):
             player.task_type = player.in_round(1).task_type
             previous_round = player.in_round(player.round_number-1)
             player.current_budget = previous_round.current_budget + previous_round.player_point_earning
+
+            # Set the max quantity and initial budget
             if player.id_in_group == 4:
                 player.max_quantity = Constants.uniform_uninformed_max
                 player.starting_budget = Constants.uniform_uninformed_endowment
@@ -251,7 +252,26 @@ class UniformBid(Page):
                     this_round_number = player.round_number)
 
 
-# Page3: Result Page_Uniform =======================================================================
+# Page2B: Page for Bankrupt Players ================================================================
+class BankruptBid(Page):
+    form_model = 'player'
+    timeout_seconds = 10
+    timer_text = 'You will be automatically forwarded to the next page in'
+
+    @staticmethod
+    def is_displayed(player: Player):
+        if player.round_number != 1 and player.is_default == 1:
+            return True
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        price_list = [2, 3, 4, 5]
+        quantity_list = [3000, 5000, 7000, 10000]
+        player.price1 = random.choice(price_list) # we assume that this player bids at a random price (from 2 to 5)
+        player.quantity1 = random.cohice(quantity_list) # we assume that this player bids a random quantity at the random price
+
+
+# Page3: Result Page =======================================================================
 class ResultsWaitPageUniform(WaitPage):
     @staticmethod
     def is_displayed(player: Player):
@@ -405,54 +425,22 @@ class ResultsWaitPageUniform(WaitPage):
                 player.additional_cost = 5000
             else:
                 player.additional_cost = 0
-            player.player_point_earning = round(group.point_for_earning * player.player_quantity_purchased - player.additional_cost, 2)
-            player.round_end_budget_left = player.current_budget + player.player_point_earning
+
+            # Points earning and end round budget left
+            if player.is_default == 0:
+                player.player_point_earning = round(group.point_for_earning * player.player_quantity_purchased - player.additional_cost, 2)
+                player.round_end_budget_left = player.current_budget + player.player_point_earning
+            elif player.is_default == 1:
+                player.player_point_earning = 0
+                player.round_end_budget_left = 0
+
+            # whether this player is bankrupt after this round
+            if player.round_end_budget_left <= 0:
+                player.is_default_next_round = 1
+            else:
+                player.is_default_next_round = 0
 
 
-
-class ResultsWaitPageFixed(WaitPage):
-    @staticmethod
-    def is_displayed(player: Player):
-        if player.task_type == "Fixed":
-            return True
-
-    @staticmethod
-    def after_all_players_arrive(group: Group):
-        # Initial variable settings
-        total_bid_number = 0
-        market_value = 1
-        market_price = Constants.fixed_market_price
-
-        # Get each player information (responses)
-        for player in group.get_players():
-            # Total submitted quantity at the market price in the group
-            total_bid_number += player.fixed_quantity
-            # Calculate Market Value
-            if player.market_signal == "High":
-                market_value += 1
-        group.market_value = market_value
-        group.market_price = market_price
-        group.total_bid_number = total_bid_number
-        quantity_above_total_share = total_bid_number - Constants.total_share
-        group.point_for_earning = round(market_value - market_price, 2) # POINTS for earning calculatino
-
-        for player in group.get_players():
-            if player.group.total_bid_number <= Constants.total_share:
-                player.player_quantity_purchased = player.fixed_quantity
-                if player.fixed_quantity > 100000:
-                    player.additional_cost = 5000
-                else:
-                    player.additional_cost = 0
-            elif player.group.total_bid_number > Constants.total_share:
-                player.player_quantity_purchased = int(round(Constants.total_share * (player.fixed_quantity / total_bid_number)))
-                if player.fixed_quantity > 100000:
-                    player.additional_cost = 5000
-                else:
-                    player.additional_cost = 0
-
-            # Point Earning
-            player.player_point_earning = round((player.player_quantity_purchased * group.point_for_earning) - player.additional_cost, 2)
-            player.round_end_budget_left = player.current_budget + player.player_point_earning
 
 
 class Results(Page):
@@ -489,7 +477,7 @@ class CombinedResults(Page):
         combined_payoff = 0
         #final_points = all_rounds[-1].current_budget + all_rounds[-1].player_point_earning
         final_points = player.round_end_budget_left
-        final_dollar_amount_temp = math.ceil(final_points / 250)
+        final_dollar_amount_temp = math.ceil(final_points / 17500) # The exchange rate is 175 points to 1 cent (17500 points to 1 dollar).
 
         #FINAL DOLLAR AMOUNT ===============================
         if final_dollar_amount_temp > 3:
@@ -503,4 +491,4 @@ class CombinedResults(Page):
 
 
 
-page_sequence = [WaitForOtherPlayer, Instructions, UniformBid, ResultsWaitPageUniform, Results, CombinedResults]
+page_sequence = [WaitForOtherPlayer, Instructions, UniformBid, BankruptBid, ResultsWaitPageUniform, Results, CombinedResults]
