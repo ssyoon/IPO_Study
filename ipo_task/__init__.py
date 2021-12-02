@@ -441,8 +441,6 @@ class ResultsWaitPageUniform(WaitPage):
                 player.is_default_next_round = 0
 
 
-
-
 class Results(Page):
     timeout_seconds = 30
     timer_text = 'You will be automatically forwarded to the next page in'
