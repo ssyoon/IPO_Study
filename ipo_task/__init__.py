@@ -9,18 +9,14 @@ c = cu
 doc = ''
 class Constants(BaseConstants):
     players_per_group = 4
-    num_rounds = 3
+    num_rounds = 5
     name_in_url = 'IPO_Study'
     total_share = 100000
     fixed_market_price = 1.94
     uniform_informed_endowment = 350000
     uniform_uninformed_endowment = 400000
-    fixed_informed_endowment = 100000
-    fixed_uninformed_endowment = 150000
     uniform_uninformed_max = 80000
     uniform_informed_max = 150000
-    fixed_uninformed_max = 80000
-    fixed_informed_max = 150000
     task_list = ["Uniform", "Uniform"] # we only run the Uniform condition
     signal_list = [
         # Set 1
@@ -107,7 +103,7 @@ class Player(BasePlayer):
     attention_earning_question = models.IntegerField(label="Suppose the value of each unit of the goods is 3, how many point earnings does Player A will obtain?", blan=True)
     task_type = models.StringField()
     fixed_quantity = models.IntegerField(min=0)
-    price1 = models.FloatField(min=0, max=6)
+    price1 = models.FloatField()
     quantity1 = models.IntegerField(min=0)
     price2 = make_price_field()
     quantity2 = make_quantity_field()
@@ -134,7 +130,7 @@ class Player(BasePlayer):
     cumulative_quantity_at_market_price = models.FloatField()
     round_end_budget_left = models.FloatField()
     final_dollar_amount = models.FloatField()
-    is_default = models.IntegerField(initial=0) # this variable is to track the player's bankrupcy status
+    is_default = models.IntegerField() # this variable is to track the player's bankrupcy status
     is_default_next_round = models.IntegerField()
 
 
@@ -176,7 +172,27 @@ class WaitForOtherPlayer(WaitPage):
         return player.round_number == 1
 
 
-## Page2A: Uniform Condition ===============================================
+## Page 2: Initiating a round ==============================================
+class RoundStart(Page):
+    form_model = 'player'
+    timeout_seconds = 5
+    timer_text = 'The next round will start in '
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        if player.round_number == 1:
+            player.is_default = 0
+        else:
+            previous_round = player.in_round(player.round_number - 1)
+            player.current_budget = previous_round.current_budget + previous_round.player_point_earning
+            if player.current_budget > 0:
+                player.is_default = 0
+            elif player.current_budget <= 0:
+                player.is_default = 1
+
+
+
+## Page3A: Uniform Condition Bidding ===============================================
 class UniformBid(Page):
     form_model = 'player'
     form_fields = ['price1', 'quantity1', 'price2', 'quantity2', 'price3', 'quantity3', 'price4', 'quantity4', 'price5', 'quantity5', 'price6', 'quantity6']
@@ -190,6 +206,7 @@ class UniformBid(Page):
     def vars_for_template(player: Player):
 
         if player.round_number == 1:
+            player.is_default = 0
             if player.id_in_group == 4:
                 player.starting_budget = Constants.uniform_uninformed_endowment
                 player.current_budget = Constants.uniform_uninformed_endowment
@@ -234,6 +251,10 @@ class UniformBid(Page):
         if player_signal_in_game != "Uninformed":
             if total_submitted_quantity > Constants.uniform_informed_max:
                 return "You submitted " + str(total_submitted_quantity) + " which is above the maximum possible bid quantity " + str(Constants.uniform_informed_max)
+        if total_submitted_quantity > player.current_budget:
+            return "You submitted a higher total quantity than your current budget. Please double check whether your total submitted bid quantity does not exceed your current budget."
+        if sum([i[0] > 6 or i[0] < 0 for i in all_response_list if None not in i]) != 0:
+            return "Price can be from 0 to 6 with 0.01 increment."
 
     @staticmethod
     def js_vars(player: Player): # Creating Variables for the JavaScript in the Page
@@ -265,10 +286,13 @@ class BankruptBid(Page):
 
     @staticmethod
     def vars_for_template(player: Player):
+        player.task_type = player.in_round(1).task_type
         price_list = [2, 3, 4, 5]
         quantity_list = [3000, 5000, 7000, 10000]
+        market_signal_list = ["Low", "High"]
         player.price1 = random.choice(price_list) # we assume that this player bids at a random price (from 2 to 5)
-        player.quantity1 = random.cohice(quantity_list) # we assume that this player bids a random quantity at the random price
+        player.quantity1 = random.choice(quantity_list) # we assume that this player bids a random quantity at the random price
+        player.market_signal = random.choice(market_signal_list)
 
 
 # Page3: Result Page =======================================================================
@@ -475,7 +499,7 @@ class CombinedResults(Page):
         combined_payoff = 0
         #final_points = all_rounds[-1].current_budget + all_rounds[-1].player_point_earning
         final_points = player.round_end_budget_left
-        final_dollar_amount_temp = math.ceil(final_points / 17500) # The exchange rate is 175 points to 1 cent (17500 points to 1 dollar).
+        final_dollar_amount_temp = round(final_points / 17500, 2) # The exchange rate is 175 points to 1 cent (17500 points to 1 dollar).
 
         #FINAL DOLLAR AMOUNT ===============================
         if final_dollar_amount_temp > 3:
@@ -489,4 +513,4 @@ class CombinedResults(Page):
 
 
 
-page_sequence = [WaitForOtherPlayer, Instructions, UniformBid, BankruptBid, ResultsWaitPageUniform, Results, CombinedResults]
+page_sequence = [WaitForOtherPlayer, Instructions, RoundStart, UniformBid, BankruptBid, ResultsWaitPageUniform, Results, CombinedResults]
