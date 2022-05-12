@@ -485,6 +485,11 @@ class Results(Page):
                     player_price1_so_far = player_price1_so_far,
                     player_quantity1_so_far = player_quantity1_so_far)
 
+    @staticmethod
+    def before_next_page(player: Player):
+        if player.round_number == Constants.num_rounds:
+            participant.finished = True
+
 
 
 class CombinedResults(Page):
@@ -513,4 +518,4 @@ class CombinedResults(Page):
 
 
 
-page_sequence = [WaitForOtherPlayer, Instructions, RoundStart, UniformBid, BankruptBid, ResultsWaitPageUniform, Results, CombinedResults]
+page_sequence = [Instructions, WaitForOtherPlayer, RoundStart, UniformBid, BankruptBid, ResultsWaitPageUniform, Results, CombinedResults]
