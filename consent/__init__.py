@@ -6,7 +6,7 @@ Your app description
 """
 
 
-class C(BaseConstants):
+class Constants(BaseConstants):
     NAME_IN_URL = 'consent'
     PLAYERS_PER_GROUP = None
     NUM_ROUNDS = 1
