@@ -6,7 +6,7 @@ Your app description
 """
 
 
-class C(BaseConstants):
+class Constants(BaseConstants):
     NAME_IN_URL = 'ipo_instruction'
     PLAYERS_PER_GROUP = None
     NUM_ROUNDS = 1
@@ -49,8 +49,8 @@ class Instructions(Page):
     @staticmethod
     def vars_for_template(player: Player):
         task_type_index = player.group.id_in_subsession % 2
-        player.task_type = C.task_list[task_type_index]
-        player.group.task_type = C.task_list[task_type_index]
+        player.task_type = Constants.task_list[task_type_index]
+        player.group.task_type = Constants.task_list[task_type_index]
         player.participant.task_type = player.task_type
 
 
