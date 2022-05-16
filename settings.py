@@ -2,8 +2,8 @@ from os import environ
 
 SESSION_CONFIGS = [
     dict(
-        name='ipo_task',
-        app_sequence=['ipo_task'],
+        name='ipo_main_task',
+        app_sequence=['consent', 'ipo_instruction', 'ipo_task'],
         num_demo_participants=4,
     ),
 ]
@@ -14,10 +14,13 @@ SESSION_CONFIGS = [
 # e.g. self.session.config['participation_fee']
 
 SESSION_CONFIG_DEFAULTS = dict(
-    real_world_currency_per_point=1.00, participation_fee=0.00, doc=""
+    real_world_currency_per_point=1.00,
+    participation_fee=0.00,
+    prolific_completion_url = "https://app.prolific.co/submissions/complete?cc=18B729C7",
+    doc=""
 )
 
-PARTICIPANT_FIELDS = ['finished']
+PARTICIPANT_FIELDS = ['finished', 'task_type']
 SESSION_FIELDS = ['prolific_completion_url']
 
 # ISO-639 code

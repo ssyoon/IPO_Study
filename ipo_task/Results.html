@@ -55,11 +55,6 @@
 </div>
 <div id="additional"></div>
 
-{{ next_button }}
-
-{{ endblock }}
-
-
 <!-- # Javascript Block -->
 {% block scripts %}
     <script>
@@ -75,6 +70,7 @@
 
         // Fuction 2: Instruction Fuction ==================
         function check_instruction() {
+            document.getElementById("additional").innerHTML = "";
             if (js_vars.task_of_player == "Fixed") {
                 document.getElementById("additional").innerHTML = "<br>" + js_vars.fixed_ins_text;
             } else if (js_vars.task_of_player == "Uniform") {
@@ -85,6 +81,7 @@
 
         // Fuction 3: Help (Example Case) Function ==================
         function example_case() {
+            document.getElementById("additional").innerHTML = "";
             if (js_vars.task_of_player == "Fixed") {
                 document.getElementById("additional").innerHTML = "random type";
             } else if (js_vars.task_of_player == "Uniform") {
@@ -98,8 +95,6 @@
         }
 
     </script>
-{% endblock %}
-
 
 <!-- CSS STYLE-->
 <style type="text/css">
@@ -109,3 +104,13 @@
     h2,h3,h4,h5,h6,h7{font-size: 18pt; color: blue;}
 
 </style>
+
+{% endblock %}
+
+{{ endblock }}
+
+
+
+
+
+

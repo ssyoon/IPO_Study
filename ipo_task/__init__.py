@@ -9,7 +9,7 @@ c = cu
 doc = ''
 class Constants(BaseConstants):
     players_per_group = 4
-    num_rounds = 5
+    num_rounds = 3
     name_in_url = 'IPO_Study'
     total_share = 100000
     fixed_market_price = 1.94
@@ -17,7 +17,6 @@ class Constants(BaseConstants):
     uniform_uninformed_endowment = 400000
     uniform_uninformed_max = 80000
     uniform_informed_max = 150000
-    task_list = ["Uniform", "Uniform"] # we only run the Uniform condition
     signal_list = [
         # Set 1
         [random.choices(["Low", "High"], [20,20], k=20),
@@ -97,10 +96,6 @@ def make_quantity_field():
 
 
 class Player(BasePlayer):
-    attention_value_question = models.IntegerField(label =  "If the number of good signals in this round is 2, what is the market value of each unit of the good?", blank=True)
-    attention_price_question = models.IntegerField(label="If in this round the players' bids are as those in the table below, what is the market price?", blank=True)
-    attention_allocation_question = models.IntegerField(label="If in this round the players' bids are as those in the table below, how many units player A will be allocated?", blank=True)
-    attention_earning_question = models.IntegerField(label="Suppose the value of each unit of the goods is 3, how many point earnings does Player A will obtain?", blan=True)
     task_type = models.StringField()
     fixed_quantity = models.IntegerField(min=0)
     price1 = models.FloatField()
@@ -134,42 +129,18 @@ class Player(BasePlayer):
     is_default_next_round = models.IntegerField()
 
 
-## Page1: Instructions ===============================================
-class Instructions(Page):
-    form_model = "player"
-    form_fields = ["attention_value_question", "attention_price_question", "attention_allocation_question", "attention_earning_question"]
-    @staticmethod
-    def is_displayed(player: Player):
-        if player.round_number == 1:
-            return True
 
-    @staticmethod
-    def vars_for_template(player: Player):
-        task_type_index = player.group.id_in_subsession % 2
-        player.task_type = Constants.task_list[task_type_index]
-        player.group.task_type = Constants.task_list[task_type_index]
-
-    @staticmethod
-    def error_message(player: Player, values):
-        if player.task_type == "Uniform":
-            if values["attention_value_question"] == 3 and values["attention_price_question"] == 0 and values["attention_allocation_question"] == 15 and values["attention_earning_question"] == 45:
-                pass
-            else:
-                return "You submitted wrong answers or did not complete all questions. Please provide correct answers. If you want to read the instructions again, please go back to the previou spage"
-        elif player.task_type == "Fixed":
-            if values["attention_value_question"] == 3 and values["attention_allocation_question"] == 25 and values["attention_earning_question"] == 20:
-                pass
-            else:
-                return "You submitted wrong answers or did not complete all questions. Please provide correct answers. If you want to read the instructions again, please go back to the previou spage"
-
-
-## Wait Page to Group Participants (This page will be run before the instruction page; players can see the instruction when they are paired with the other three)
+## Page 1: Wait Page for Grouping ==========================================
 class WaitForOtherPlayer(WaitPage):
     group_by_arrival_time = True
 
     @staticmethod
     def is_displayed(player):
         return player.round_number == 1
+
+    @staticmethod
+    def before_next_page(player: Player):
+        player.task_type = player.participant.task_type
 
 
 ## Page 2: Initiating a round ==============================================
@@ -180,6 +151,7 @@ class RoundStart(Page):
 
     @staticmethod
     def vars_for_template(player: Player):
+        player.task_type = player.participant.task_type
         if player.round_number == 1:
             player.is_default = 0
         else:
@@ -204,7 +176,6 @@ class UniformBid(Page):
 
     @staticmethod
     def vars_for_template(player: Player):
-
         if player.round_number == 1:
             player.is_default = 0
             if player.id_in_group == 4:
@@ -476,7 +447,7 @@ class Results(Page):
         player_quantity1_so_far = [i.quantity1 for i in player.in_all_rounds()]
         all_round_numbers = [i.round_number for i in player.in_all_rounds()]
         uniform_ins_file = open("uniform_instruction.txt", "r")
-        fixed_ins_file = open("uniform_instruction.txt", "r")
+        fixed_ins_file = open("fixed_instruction.txt", "r")
         return dict(player_results_so_far = player_responses_so_far,
                     all_round_numbers_so_far = all_round_numbers,
                     uniform_ins_text = uniform_ins_file.read(),
@@ -485,10 +456,6 @@ class Results(Page):
                     player_price1_so_far = player_price1_so_far,
                     player_quantity1_so_far = player_quantity1_so_far)
 
-    @staticmethod
-    def before_next_page(player: Player):
-        if player.round_number == Constants.num_rounds:
-            participant.finished = True
 
 
 
@@ -515,7 +482,11 @@ class CombinedResults(Page):
             "combined_payoff": player.final_dollar_amount
         }
 
+    @staticmethod
+    def before_next_page(player: Player, timeout_happened):
+        if player.round_number == Constants.num_rounds:
+            player.participant.finished = True
+            player.finished = 'True'
 
 
-
-page_sequence = [Instructions, WaitForOtherPlayer, RoundStart, UniformBid, BankruptBid, ResultsWaitPageUniform, Results, CombinedResults]
+page_sequence = [WaitForOtherPlayer, RoundStart, UniformBid, BankruptBid, ResultsWaitPageUniform, Results, CombinedResults]
