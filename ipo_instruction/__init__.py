@@ -8,8 +8,8 @@ Your app description
 
 class Constants(BaseConstants):
     name_in_url = 'ipo_instruction'
-    PLAYERS_PER_GROUP = None
-    NUM_ROUNDS = 1
+    players_per_group = None
+    num_rounds = 1
     task_list = ["Uniform", "Uniform"]  # we only run the Uniform condition
 
 

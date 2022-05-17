@@ -8,8 +8,8 @@ Your app description
 
 class Constants(BaseConstants):
     name_in_url = 'consent'
-    PLAYERS_PER_GROUP = None
-    NUM_ROUNDS = 1
+    players_per_group = None
+    num_rounds = 1
 
 
 class Subsession(BaseSubsession):
