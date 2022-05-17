@@ -9,7 +9,7 @@ c = cu
 doc = ''
 class Constants(BaseConstants):
     players_per_group = 4
-    num_rounds = 2
+    num_rounds = 20
     name_in_url = 'IPO_Study'
     total_share = 100000
     fixed_market_price = 1.94
@@ -259,7 +259,7 @@ class BankruptBid(Page):
     def vars_for_template(player: Player):
         player.task_type = player.in_round(1).task_type
         price_list = [2, 3, 4, 5]
-        quantity_list = [3000, 5000, 7000, 10000]
+        quantity_list = [15000, 30000, 50000, 75000]
         market_signal_list = ["Low", "High"]
         player.price1 = random.choice(price_list) # we assume that this player bids at a random price (from 2 to 5)
         player.quantity1 = random.choice(quantity_list) # we assume that this player bids a random quantity at the random price
