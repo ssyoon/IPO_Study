@@ -9,7 +9,7 @@ c = cu
 doc = ''
 class Constants(BaseConstants):
     players_per_group = 4
-    num_rounds = 20
+    num_rounds = 2
     name_in_url = 'IPO_Study'
     total_share = 100000
     fixed_market_price = 1.94
@@ -486,7 +486,7 @@ class CombinedResults(Page):
     def before_next_page(player: Player, timeout_happened):
         if player.round_number == Constants.num_rounds:
             player.participant.finished = True
-            player.finished = 'True'
+            #player.finished = 'True'
 
 
 page_sequence = [WaitForOtherPlayer, RoundStart, UniformBid, BankruptBid, ResultsWaitPageUniform, Results, CombinedResults]
