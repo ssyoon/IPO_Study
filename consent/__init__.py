@@ -7,7 +7,7 @@ Your app description
 
 
 class Constants(BaseConstants):
-    NAME_IN_URL = 'consent'
+    name_in_url = 'consent'
     PLAYERS_PER_GROUP = None
     NUM_ROUNDS = 1
 

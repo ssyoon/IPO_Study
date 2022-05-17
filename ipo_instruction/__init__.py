@@ -7,7 +7,7 @@ Your app description
 
 
 class C(BaseConstants):
-    NAME_IN_URL = 'ipo_instruction'
+    name_in_url = 'ipo_instruction'
     PLAYERS_PER_GROUP = None
     NUM_ROUNDS = 1
     task_list = ["Uniform", "Uniform"]  # we only run the Uniform condition

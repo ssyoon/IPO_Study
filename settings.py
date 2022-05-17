@@ -16,7 +16,6 @@ SESSION_CONFIGS = [
 SESSION_CONFIG_DEFAULTS = dict(
     real_world_currency_per_point=1.00,
     participation_fee=0.00,
-    prolific_completion_url = "https://app.prolific.co/submissions/complete?cc=18B729C7",
     doc=""
 )
 
