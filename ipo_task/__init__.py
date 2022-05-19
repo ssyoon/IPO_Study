@@ -81,6 +81,8 @@ class Group(BaseGroup):
     market_price = models.FloatField()
     point_for_earning = models.FloatField()
     task_type = models.StringField()
+    total_at_market_price = models.IntegerField()
+    cumulative_quantity_above_market_price = models.IntegerField()
 
 def make_price_field():
     return models.FloatField(
@@ -167,6 +169,8 @@ class RoundStart(Page):
 ## Page3A: Uniform Condition Bidding ===============================================
 class UniformBid(Page):
     form_model = 'player'
+    timeout_seconds = 60
+    timer_text = 'The next round will start in '
     form_fields = ['price1', 'quantity1', 'price2', 'quantity2', 'price3', 'quantity3', 'price4', 'quantity4', 'price5', 'quantity5', 'price6', 'quantity6']
 
     @staticmethod
@@ -353,7 +357,9 @@ class ResultsWaitPageUniform(WaitPage):
 
         # GROUP-LEVEL CALCULATION
         # Get MARKET PRICE of each round
-        full_response_set_sorted = sorted(full_response_set, key=lambda x: x[2], reverse=True) # Sort the combined (all players in the group) dataset
+        full_response_set_sorted = sorted(full_response_set, key=lambda x: x[2], reverse=True) # Sort the combined (all players in the group) dataset by bidding price
+
+        # Getting cumulative bidding quantity
         all_quantity_list = []
         for i in full_response_set_sorted:
             all_quantity_list.append(i[3])
@@ -383,9 +389,9 @@ class ResultsWaitPageUniform(WaitPage):
                 total_at_market_price += i[3]
 
         for i in full_response_set_sorted:
-            if i[2] > market_price:
+            if i[2] > market_price: # Bids that are higher than market price
                 if i[0] == 1: #i[0] indicates player ID
-                    p1_quantity_purchased += i[3] # i[2] indicates player's quantity submitted at the paired price
+                    p1_quantity_purchased += i[3] # i[3] indicates player's quantity submitted at the paired price
                     cumulative_quantity_above_market_price += i[3]
                 elif i[0] == 2:
                     p2_quantity_purchased += i[3]
@@ -396,7 +402,7 @@ class ResultsWaitPageUniform(WaitPage):
                 elif i[0] == 4:
                     p4_quantity_purchased += i[3]
                     cumulative_quantity_above_market_price += i[3]
-            elif i[2] == market_price: # i[2] indicates player's price submitted
+            elif i[2] == market_price and total_at_market_price != 0: # Bids that are at the market price
                 if i[0] == 1:
                     p1_quantity_purchased += round((Constants.total_share - cumulative_quantity_above_market_price) * (i[3]/total_at_market_price))
                 elif i[0] == 2:
@@ -413,6 +419,8 @@ class ResultsWaitPageUniform(WaitPage):
             p2.player_quantity_purchased = int(p2_quantity_purchased)
             p3.player_quantity_purchased = int(p3_quantity_purchased)
             p4.player_quantity_purchased = int(p4_quantity_purchased)
+            group.cumulative_quantity_above_market_price = cumulative_quantity_above_market_price
+            group.total_at_market_price = total_at_market_price
 
         # Penalty for bidding more than 100,000 and Purchased Quantity and Amount
         for player in group.get_players():
