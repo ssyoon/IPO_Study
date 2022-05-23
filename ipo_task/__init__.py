@@ -84,6 +84,7 @@ class Group(BaseGroup):
     total_at_market_price = models.IntegerField()
     cumulative_quantity_above_market_price = models.IntegerField()
 
+
 def make_price_field():
     return models.FloatField(
         min=0, max=6,
@@ -129,7 +130,8 @@ class Player(BasePlayer):
     final_dollar_amount = models.FloatField()
     is_default = models.IntegerField() # this variable is to track the player's bankrupcy status
     is_default_next_round = models.IntegerField()
-
+    is_missing_response = models.IntegerField()
+    total_missing_responses = models.IntegerField()
 
 
 ## Page 1: Wait Page for Grouping ==========================================
@@ -169,14 +171,22 @@ class RoundStart(Page):
 ## Page3A: Uniform Condition Bidding ===============================================
 class UniformBid(Page):
     form_model = 'player'
-    timeout_seconds = 60
-    timer_text = 'The next round will start in '
+    timeout_seconds = 90
+    timer_text = 'The bidding will be closed in '
     form_fields = ['price1', 'quantity1', 'price2', 'quantity2', 'price3', 'quantity3', 'price4', 'quantity4', 'price5', 'quantity5', 'price6', 'quantity6']
+
 
     @staticmethod
     def is_displayed(player: Player):
         if player.in_round(1).task_type == "Uniform" and player.is_default == 0:
             return True
+
+    @staticmethod
+    def get_timeout_seconds(player: Player):
+        if player.round_number <= 5: # for the first round, players are given 180 seconds (3 minutes) to complete the bid
+            return 30
+        elif player.round_number > 5: # for the remaining rounds, players are given 90 seconds to complete the bid.
+            return 90
 
     @staticmethod
     def vars_for_template(player: Player):
@@ -207,6 +217,21 @@ class UniformBid(Page):
         signal_list_index = player.group.id_in_subsession % 10
         player.market_signal = Constants.signal_list[signal_list_index-1][player.id_in_group - 1][player.round_number - 1]
 
+    @staticmethod
+    def before_next_page(player: Player, timeout_happened):
+        if timeout_happened:
+            player.is_missing_response = 1
+            player_market_signal_temp = player.market_signal
+            if player_market_signal_temp == "Uninformed":
+                price_list = [2, 3, 4, 5]
+                quantity_list = [20000, 40000, 60000, 80000]
+            else:
+                price_list = [2, 3, 4, 5]
+                quantity_list = [25000, 50000, 75000, 100000]
+            player.price1 = random.choice(price_list)  # we assume that this player bids at a random price (from 2 to 5)
+            player.quantity1 = random.choice(quantity_list)  # we assume that this player bids a random quantity at the random price
+        else:
+            player.is_missing_response = 0
 
     # Custom Validation
     @staticmethod
@@ -264,10 +289,12 @@ class BankruptBid(Page):
         player.task_type = player.in_round(1).task_type
         price_list = [2, 3, 4, 5]
         quantity_list = [15000, 30000, 50000, 75000]
-        market_signal_list = ["Low", "High"]
+        #market_signal_list = ["Low", "High"]
         player.price1 = random.choice(price_list) # we assume that this player bids at a random price (from 2 to 5)
         player.quantity1 = random.choice(quantity_list) # we assume that this player bids a random quantity at the random price
-        player.market_signal = random.choice(market_signal_list)
+        #player.market_signal = random.choice(market_signal_list)
+        signal_list_index = player.group.id_in_subsession % 10
+        player.market_signal = Constants.signal_list[signal_list_index - 1][player.id_in_group - 1][player.round_number - 1]
 
 
 # Page3: Result Page =======================================================================
@@ -475,17 +502,26 @@ class CombinedResults(Page):
 
     @staticmethod
     def vars_for_template(player: Player):
-        #all_rounds = player.in_all_rounds()
         combined_payoff = 0
         #final_points = all_rounds[-1].current_budget + all_rounds[-1].player_point_earning
+
+        # Counting tne number of missing responses ===============================
+        total_missing_response = 0
+        if player.is_default == 0:
+            for i in player.in_all_rounds():
+                total_missing_response += player.is_missing_response
+            player.total_missing_responses = total_missing_response
+
+
+        # Calculating the final points earned and dollar amount
         final_points = player.round_end_budget_left
         final_dollar_amount_temp = round(final_points / 17500, 2) # The exchange rate is 175 points to 1 cent (17500 points to 1 dollar).
 
         #FINAL DOLLAR AMOUNT ===============================
-        if final_dollar_amount_temp > 3:
+        if final_dollar_amount_temp > 8 and total_missing_response <= 8:
             player.final_dollar_amount = final_dollar_amount_temp
-        elif final_dollar_amount_temp <= 3:
-            player.final_dollar_amount = 3
+        elif final_dollar_amount_temp <= 0 or total_missing_response > 8:
+            player.final_dollar_amount = 8
         return {
             "combined_payoff": player.final_dollar_amount
         }

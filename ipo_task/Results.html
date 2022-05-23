@@ -10,7 +10,7 @@
 <p>You earned a total of {{ player.player_point_earning }} points in this round.</p>
 
 <!-- All Bids of the Player in this Round -->
-<h5>Your Bid This Round</h5>
+<br><h5>Your Bid This Round</h5>
 
 {{ if player.task_type == "Fixed" }}
     You are player {{ player.id_in_group }} <br>
@@ -32,7 +32,7 @@
 {{ endif }}
 
 <!-- Other Players' Result -->
-<h5>Other Players</h5>
+<br><h5>Other Players</h5>
 <table class = "table table-striped table-hover">
     <thead>
     <th>Participant</th>
