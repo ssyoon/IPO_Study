@@ -9,7 +9,7 @@ c = cu
 doc = ''
 class Constants(BaseConstants):
     players_per_group = 4
-    num_rounds = 20 # the number of rounds
+    num_rounds = 10 # the number of rounds
     name_in_url = 'IPO_Study'
     total_share = 100000
     fixed_market_price = 1.94
