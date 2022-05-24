@@ -83,6 +83,7 @@ class Group(BaseGroup):
     task_type = models.StringField()
     total_at_market_price = models.IntegerField()
     cumulative_quantity_above_market_price = models.IntegerField()
+    has_dropout = models.BooleanField()
 
 
 def make_price_field():
@@ -131,7 +132,7 @@ class Player(BasePlayer):
     is_default = models.IntegerField() # this variable is to track the player's bankrupcy status
     is_default_next_round = models.IntegerField()
     is_missing_response = models.IntegerField()
-    total_missing_responses = models.IntegerField()
+    is_dropout = models.BooleanField()
 
 
 ## Page 1: Wait Page for Grouping ==========================================
@@ -277,7 +278,7 @@ class UniformBid(Page):
 class BankruptBid(Page):
     form_model = 'player'
     timeout_seconds = 10
-    timer_text = 'You will be automatically forwarded to the next page in'
+    timer_text = 'Do not close this window. You will be automatically forwarded to the next page in'
 
     @staticmethod
     def is_displayed(player: Player):
@@ -299,6 +300,7 @@ class BankruptBid(Page):
 
 # Page3: Result Page =======================================================================
 class ResultsWaitPageUniform(WaitPage):
+
     @staticmethod
     def is_displayed(player: Player):
         if player.task_type == "Uniform":
@@ -519,9 +521,9 @@ class CombinedResults(Page):
 
         #FINAL DOLLAR AMOUNT ===============================
         if final_dollar_amount_temp > 8 and total_missing_response <= 8:
-            player.final_dollar_amount = final_dollar_amount_temp
+            return player.final_dollar_amount = final_dollar_amount_temp
         elif final_dollar_amount_temp <= 0 or total_missing_response > 8:
-            player.final_dollar_amount = 8
+            return player.final_dollar_amount = 8
         return {
             "combined_payoff": player.final_dollar_amount
         }

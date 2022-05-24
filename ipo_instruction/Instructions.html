@@ -16,15 +16,20 @@ If you have a question, please raise your hand and one of us will come to your d
 <h2><b>Description of the experiment</b></h2>
     Each person in this room plays the role of a buyer.
     You are randomly paired with three other buyers in a group (the same three throughout the session).
-    One buyer of your group is an uninformed buyer, and the other three are informed buyers.
-    The status of each of you as an informed or uninformed buyer remains the same in the session.
+    One buyer of your group is an UNINFORMED buyer, and the other three are INFORMED buyers.
+    The status of each of you as an INFORMED or UNINFORMED buyer remains the same in the session.
     You will not know which of the participants are in your group.
-    The session consists of 20 rounds, each of which is structured as follows.
-    The computer takes the role of the seller.
-    The number of units for sale is 100,000.
-    At the beginning of the round, each informed buyer receives a signal revealing the value of the goods.
-    The probability of observing either a high value or a low value signal is 50%.
-    The uninformed buyer does not receive a signal. No one knows the other buyers’ signals.</p>
+    <br><br>The session consists of 20 rounds, each of which is structured as follows.<br>
+    <li>The computer takes the role of the seller.</li>
+    <li>The number of units for sale is 100,000.</li>
+    <li>At the beginning of the round, each informed buyer receives a signal revealing the value of the goods.</li>
+    <li>The probability of observing either a high value or a low value signal is 50%.</li>
+    <li>The uninformed buyer does not receive a signal.</li>
+    <li>No one knows the other buyers’ signals.</li>
+    <li>Each player needs to provide at least one bid.</li>
+    <li>For the first 5 rounds, you will be given 180 seconds (3 minutes) to complete the bid, and for the remaining rounds, you will be given 90 seconds.
+    If you do not provide any bid within the provided time, the computer will randomly bid, and the result will be reflected in your points earnings or losses.</li>
+    <li>If you go bankrupt, the computer will randomly bid, but the results will not be counted into your points earnings or losses.</li></p>
 <p><b>The value of each unit of the goods equals one plus the number of high value signals received in your group.</b></p>
 
 {% if player.task_type == "Uniform" %}
@@ -44,12 +49,12 @@ If you have a question, please raise your hand and one of us will come to your d
 <!-- ALLOCATION RULES -->
 {{ if player.task_type == "Uniform" }}
 <p>
-    <h3><b>Allocation rule</b></h3>
+    <br><h3><b>Allocation rule</b></h3>
     When all the buyers submit the decisions, the seller will decide the market price and allocate the goods.
-    The <b>Price and allocation rules</b> are as follows.
-    If the total quantity bid for in your group is less than or equal to the quantity for sale (i.e.100,000 units), the market price will be zero.
-    Each of you will be allocated the number of units you have submitted.
-    If the total quantity bid for in your group exceeds the quantity for sale (100,000 units), the goods will be allotted from the highest bidding price to lower prices until all the units are allocated. The market price will be set as the highest bidding price where the cumulated units bid for exceed the quantity for sale. The quantity you have bid for above the market price will be fully allocated, those below the market price will be ignored, and those at the market price will be allocated proportionately to fully sell the goods (always rounded to integer).
+    The <b>Price and allocation rules</b> are as follows.<br>
+    <li>If the total quantity bid for in your group is less than or equal to the quantity for sale (i.e.100,000 units), the market price will be zero.
+    <li>Each of you will be allocated the number of units you have submitted.
+    <li>If the total quantity bid for in your group exceeds the quantity for sale (100,000 units), the goods will be allotted from the highest bidding price to lower prices until all the units are allocated. The market price will be set as the highest bidding price where the cumulated units bid for exceed the quantity for sale. The quantity you have bid for above the market price will be fully allocated, those below the market price will be ignored, and those at the market price will be allocated proportionately to fully sell the goods (always rounded to integer).
 </p></br>
 {{ else if player.task_type == "Fixed" }}
 <p>
@@ -90,14 +95,15 @@ If you have a question, please raise your hand and one of us will come to your d
 
 
 <p>
-    At the end of the session, the total points on your account will be converted into pounds and be paid to you in cash.
+    At the end of the session, the total points on your account will be converted into dollars and be paid to you in cash.
     The exchange rate will be 175 points = 1 cent.
     The more points you have, the more money you will earn.
 </p>
 <p>
     In our research, we are interested in what will happen if everybody tries to earn as many points as possible.
     Making unreasonable decisions may make your account balance negative.
-    If you go bankrupt, you cannot continue participating in this experiment and will be paid only three dollars.
+    If you go bankrupt, you cannot continue participating in this experiment and will be paid only the Prolific minimum.
+    If you go bankrupt, please do not leave the page and keep waiting until other players complete the session.
     By understanding the instructions and making decisions carefully, you may earn a considerable amount of money.
 </p></br>
 
@@ -127,9 +133,6 @@ If you have a question, please raise your hand and one of us will come to your d
     (The numbers of the questions do not relate to the numbers of the real experiment.)
 </p>
 
-<p>
-    Now please press the “Next” button and follow the prompts on your screen.
-</p></br>
 
 <!-- ATTENTION CHECK QUESTIONS -->
 <h7><b>Attention Check Questions</b></h7>
