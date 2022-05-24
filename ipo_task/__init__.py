@@ -9,7 +9,7 @@ c = cu
 doc = ''
 class Constants(BaseConstants):
     players_per_group = 4
-    num_rounds = 20
+    num_rounds = 4
     name_in_url = 'IPO_Study'
     total_share = 100000
     fixed_market_price = 1.94
@@ -173,7 +173,7 @@ class RoundStart(Page):
 ## Page3A: Uniform Condition Bidding ===============================================
 class UniformBid(Page):
     form_model = 'player'
-    timeout_seconds = 90
+    #timeout_seconds = 90
     timer_text = 'The bidding will be closed in '
     form_fields = ['price1', 'quantity1', 'price2', 'quantity2', 'price3', 'quantity3', 'price4', 'quantity4', 'price5', 'quantity5', 'price6', 'quantity6']
 
@@ -186,7 +186,7 @@ class UniformBid(Page):
     @staticmethod
     def get_timeout_seconds(player: Player):
         if player.round_number <= 5: # for the first round, players are given 180 seconds (3 minutes) to complete the bid
-            return 30
+            return 180
         elif player.round_number > 5: # for the remaining rounds, players are given 90 seconds to complete the bid.
             return 90
 
@@ -512,8 +512,10 @@ class CombinedResults(Page):
         total_missing_response = 0
         if player.is_default == 0:
             for i in player.in_all_rounds():
-                total_missing_response += player.is_missing_response
+                total_missing_response += i.is_missing_response
             player.total_missing_responses = total_missing_response
+        elif player.is_default == 1:
+            player.total_missing_responses = -99
 
 
         # Calculating the final points earned and dollar amount
@@ -521,9 +523,9 @@ class CombinedResults(Page):
         final_dollar_amount_temp = round(final_points / 17500, 2) # The exchange rate is 175 points to 1 cent (17500 points to 1 dollar).
 
         #FINAL DOLLAR AMOUNT ===============================
-        if final_dollar_amount_temp > 8 and total_missing_response < 9:
+        if final_dollar_amount_temp > 8 and total_missing_response < 7:
             player.final_dollar_amount = final_dollar_amount_temp
-        elif final_dollar_amount_temp <= 0 or total_missing_response > 8:
+        elif final_dollar_amount_temp <= 8 or total_missing_response > 6:
             player.final_dollar_amount = 8
         return {
             "combined_payoff": player.final_dollar_amount

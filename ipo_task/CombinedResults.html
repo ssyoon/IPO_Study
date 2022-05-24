@@ -1,16 +1,17 @@
 {{ block title }}Final Result{{ endblock }}
 {{ block content }}
 
+{{ if player.total_missing_responses > 0 }}
 
-<p> Your cumulative final earning is ${{ combined_payoff }}.
+    The study is completed. However, you missed over 30% of the session, so your payment is $0.
 
-<br><br> You will be paid $8 immediately, and the remainder will be paid after the data collection is completed.
-<br><br>
+{{ else }}
 
-Click <a href="https://app.prolific.co/submissions/complete?cc=18B729C7">here</a>
-                to be redirected to Prolific's completion page.
+    Your cumulative final earning is ${{ combined_payoff }}.
+    <br><br> You will be paid $8 within a day, and the remainder will be paid after the data collection is completed.<br><br>
+    Click <a href="https://app.prolific.co/submissions/complete?cc=18B729C7">here</a> to be redirected to Prolific's completion page.
 
-
+{{ endif }}
 {{ endblock }}
 
 
