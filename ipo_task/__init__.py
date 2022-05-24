@@ -133,6 +133,7 @@ class Player(BasePlayer):
     is_default_next_round = models.IntegerField()
     is_missing_response = models.IntegerField()
     is_dropout = models.BooleanField()
+    total_missing_responses = models.IntegerField()
 
 
 ## Page 1: Wait Page for Grouping ==========================================
