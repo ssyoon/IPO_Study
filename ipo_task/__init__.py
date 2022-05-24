@@ -520,10 +520,12 @@ class CombinedResults(Page):
         final_dollar_amount_temp = round(final_points / 17500, 2) # The exchange rate is 175 points to 1 cent (17500 points to 1 dollar).
 
         #FINAL DOLLAR AMOUNT ===============================
-        if final_dollar_amount_temp > 8 and total_missing_response <= 8:
-            return player.final_dollar_amount = final_dollar_amount_temp
+        if final_dollar_amount_temp > 8 and total_missing_response < 9:
+            player.final_dollar_amount = final_dollar_amount_temp
+            return player.final_dollar_amount
         elif final_dollar_amount_temp <= 0 or total_missing_response > 8:
-            return player.final_dollar_amount = 8
+            player.final_dollar_amount = 8
+            return player.final_dollar_amount
         return {
             "combined_payoff": player.final_dollar_amount
         }
