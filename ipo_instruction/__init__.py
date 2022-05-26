@@ -60,12 +60,12 @@ class Instructions(Page):
             if values["attention_value_question"] == 3 and values["attention_price_question"] == 0 and values["attention_allocation_question"] == 15 and values["attention_earning_question"] == 45:
                 pass
             else:
-                return "You submitted wrong answers or did not complete all questions. Please provide correct answers. If you want to read the instructions again, please go back to the previou spage"
+                return "You submitted wrong answers or did not complete all questions. Please provide correct answers. If you want to read the instructions again, please go back to the previous page"
         elif player.task_type == "Fixed":
             if values["attention_value_question"] == 3 and values["attention_allocation_question"] == 25 and values["attention_earning_question"] == 20:
                 pass
             else:
-                return "You submitted wrong answers or did not complete all questions. Please provide correct answers. If you want to read the instructions again, please go back to the previou spage"
+                return "You submitted wrong answers or did not complete all questions. Please provide correct answers. If you want to read the instructions again, please go back to the previous page"
 
 
 

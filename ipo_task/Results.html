@@ -5,9 +5,13 @@
 
 <p>Market price in this round is {{ group.market_price }}</p>
 
+<p>The total cumulative units purchased by your group is {{ group.group_total_quantity_purchased }}</p>
+
 <p>Your quantity purchased at the market price in this round is {{ player.player_quantity_purchased }}</p>
 
 <p>You earned a total of {{ player.player_point_earning }} points in this round.</p>
+
+<p>Your current total point earning is {{ player.round_end_budget_left }} </p>
 
 <!-- All Bids of the Player in this Round -->
 <br><h5>Your Bid This Round</h5>
@@ -27,6 +31,31 @@
             <td>1</td>
             <td>{{ player.price1 }}</td>
             <td>{{ player.quantity1 }}</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>{{ player.field_maybe_none('price2') }}</td>
+            <td>{{ player.field_maybe_none('quantity2') }}</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>{{ player.field_maybe_none('price3') }}</td>
+            <td>{{ player.field_maybe_none('quantity3') }}</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>{{ player.field_maybe_none('price4') }}</td>
+            <td>{{ player.field_maybe_none('quantity4') }}</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>{{ player.field_maybe_none('price5') }}</td>
+            <td>{{ player.field_maybe_none('quantity5') }}</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>{{ player.field_maybe_none('price6') }}</td>
+            <td>{{ player.field_maybe_none('quantity6') }}</td>
         </tr>
     </table>
 {{ endif }}

@@ -7,18 +7,17 @@
 
 <br>Thank you for coming to the experiment.
 This session is part of an experiment in the economics of decision-making.
-During the session, please do not talk or communicate with any of the other participants.
-If you have a question, please raise your hand and one of us will come to your desk to answer it.</br>
+During the session, please do not talk or communicate with any of the other participants.</br>
 
 
 <!-- DESCRIPTIONS OF EXPERIMENT -->
 <br>
 <h2><b>Description of the experiment</b></h2>
-    Each person in this room plays the role of a buyer.
+    Each person in your group plays the role of a buyer.
     You are randomly paired with three other buyers in a group (the same three throughout the session).
     One buyer of your group is an UNINFORMED buyer, and the other three are INFORMED buyers.
     The status of each of you as an INFORMED or UNINFORMED buyer remains the same in the session.
-    You will not know which of the participants are in your group.
+    You will not know who the participants in your group are.
     <br><br>The session consists of 20 rounds, each of which is structured as follows.<br>
     <li>The computer takes the role of the seller.</li>
     <li>The number of units for sale is 100,000.</li>
@@ -103,7 +102,7 @@ If you have a question, please raise your hand and one of us will come to your d
     In our research, we are interested in what will happen if everybody tries to earn as many points as possible.
     Making unreasonable decisions may make your account balance negative.
     If you go bankrupt, you cannot continue participating in this experiment and will be paid only the Prolific minimum.
-    If you do not submit your bid more than 30% of the 20 rounds, you will be treated as a dropout and will not be paid.
+    If you do not submit a bid for more than 30% of the 20 rounds, you will be treated as a dropout and will not be paid.
     By understanding the instructions and making decisions carefully, you may earn a considerable amount of money.
 </p></br>
 
@@ -112,7 +111,7 @@ If you have a question, please raise your hand and one of us will come to your d
     <h6><b>Information you will receive</b></h6>
 <p>
     {{ if player.task_type == "Uniform" }}
-        At the end of each round, you will be informed the results of that round including the units and the points obtained by you and your competitors, the total cumulated units placed at the market price, the per unit value and market price of the goods, and your total point earnings.
+        At the end of each round, you will be informed of the results of that round including the units and the points obtained by you and your competitors, the total cumulated units placed at the market price, the per unit value and market price of the goods, and your total point earnings.
         The results will be displayed for 30 seconds before the new round begins.
         However, results of previous rounds can be checked from the “History” menu at any time during the session.
     {{ else if player.task_type == "Fixed" }}
@@ -153,7 +152,7 @@ If you have a question, please raise your hand and one of us will come to your d
 <p>Please answer the following questions:</p>
 
 {{ if player.task_type == "Uniform" }}
-    1. If the number of good signals in this round is 2, what is the market value of each unit of the good?
+    1. If the number of high value signals in this round is 2, what is the market value of each unit of the good?
     {{ form.attention_value_question }} </br>
     If in this round the players' bids are as those in the table below, then: </br>
     2. What is the market price?
@@ -175,7 +174,7 @@ If you have a question, please raise your hand and one of us will come to your d
 {{ endif }}
 
 <!-- Example Table -->
-<img src="{{ static 'ExampleTable.pdf' }}"/></br></br>
+<img src="{{ static 'ExampleTable.tiff' }}"/></br></br>
 
 {{ next_button }}
 

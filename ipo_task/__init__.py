@@ -84,6 +84,7 @@ class Group(BaseGroup):
     total_at_market_price = models.IntegerField()
     cumulative_quantity_above_market_price = models.IntegerField()
     has_dropout = models.BooleanField()
+    group_total_quantity_purchased = models.IntegerField()
 
 
 def make_price_field():
@@ -323,7 +324,7 @@ class ResultsWaitPageUniform(WaitPage):
                 bid1_price = round(player.price1,2)
                 bid1_quantity = player.quantity1
             except TypeError:
-                bid_price = -99
+                bid1_price = -99
                 bid1_quantity = -99
             try:
                 bid2_price = round(player.price2,2)
@@ -453,7 +454,11 @@ class ResultsWaitPageUniform(WaitPage):
             group.total_at_market_price = total_at_market_price
 
         # Penalty for bidding more than 100,000 and Purchased Quantity and Amount
+        group_total_quantity_purchased = 0
         for player in group.get_players():
+            # Total Quantity Purchased of the Group
+            group_total_quantity_purchased += player.player_quantity_purchased
+
             if player.player_total_bid_number > 100000:
                 player.additional_cost = 5000
             else:
@@ -472,6 +477,7 @@ class ResultsWaitPageUniform(WaitPage):
                 player.is_default_next_round = 1
             else:
                 player.is_default_next_round = 0
+        group.group_total_quantity_purchased = group_total_quantity_purchased
 
 
 class Results(Page):
