@@ -224,15 +224,8 @@ class UniformBid(Page):
     def before_next_page(player: Player, timeout_happened):
         if timeout_happened:
             player.is_missing_response = 1
-            player_market_signal_temp = player.market_signal
-            if player_market_signal_temp == "Uninformed":
-                price_list = [2, 3, 4, 5]
-                quantity_list = [20000, 40000, 60000, 80000]
-            else:
-                price_list = [2, 3, 4, 5]
-                quantity_list = [25000, 50000, 75000, 100000]
-            player.price1 = random.choice(price_list)  # we assume that this player bids at a random price (from 2 to 5)
-            player.quantity1 = random.choice(quantity_list)  # we assume that this player bids a random quantity at the random price
+            player.price1 = 0  # we assume that this player bids at a random price (from 2 to 5)
+            player.quantity1 = 0  # we assume that this player bids a random quantity at the random price
         else:
             player.is_missing_response = 0
 
