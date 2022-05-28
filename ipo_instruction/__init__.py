@@ -57,15 +57,25 @@ class Instructions(Page):
     @staticmethod
     def error_message(player: Player, values):
         if player.task_type == "Uniform":
-            if values["attention_value_question"] == 3 and values["attention_price_question"] == 0 and values["attention_allocation_question"] == 15 and values["attention_earning_question"] == 45:
+            if values["attention_value_question"] == 2 and values["attention_price_question"] == 1 and values["attention_allocation_question"] == 50 and values["attention_earning_question"] == 50:
                 pass
+            elif values["attention_value_question"] != 2:
+                return "Market value is the number of High value signal + 1"
+            elif values["attention_price_question"] != 1:
+                return "If the total quantity bid for in your group is less than the total number of units for sale, the market price will be 0. " \
+                       "If the total quantity bid for in your group is greater than the total number of units for sale, the market price will be set as the highest bidding price where the cumulated units bid for exceed the quantity for sale."
+            elif values["attention_allocation_question"] != 50:
+                return "If the total quantity bid for in your group exceeds the quantity for sale, the goods will be allotted from the highest bidding price to lower prices until all the units are allocated. " \
+                       "The quantity you have bid for above the market price will be fully allocated, those below the market price will be ignored, and those at the market price will be allocated proportionately to fully sell the goods (always rounded to integer)."
+            elif values["attention_earning_question"] != 50:
+                return "Points earnings = (the per unit market value - the market price) x the number of units allocated"
             else:
-                return "You submitted wrong answers or did not complete all questions. Please provide correct answers. If you want to read the instructions again, please go back to the previous page"
+                return "You submitted wrong answers or did not complete all questions. Please provide correct answers. If you need, please carefully read the instructions one more time."
         elif player.task_type == "Fixed":
             if values["attention_value_question"] == 3 and values["attention_allocation_question"] == 25 and values["attention_earning_question"] == 20:
                 pass
             else:
-                return "You submitted wrong answers or did not complete all questions. Please provide correct answers. If you want to read the instructions again, please go back to the previous page"
+                return "You submitted wrong answers or did not complete all questions. Please provide correct answers. If you need, please carefully read the instructions one more time."
 
 
 

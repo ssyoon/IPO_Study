@@ -140,9 +140,8 @@ During the session, please do not talk or communicate with any of the other part
 
 {{ if player.task_type == "Uniform" }}
     Suppose there are 100 units for sale.
-    Player A plays with Player B.
-    Each player who bids for more than 100 units needs to pay a cost of 5 points.
-    If in this round the numbers of units that players bid for are as below, then: <br><br>
+    Player A plays with the other players.
+    Each player who bids for more than 100 units needs to pay a cost of 5 points. </br></br>
 {{ else if player.task_type == "Fixed" }}
     Suppose there are 100 units for sale.
     Player A plays with the other players.
@@ -150,15 +149,17 @@ During the session, please do not talk or communicate with any of the other part
     The market price is predetermined as 2 points per unit. </br></br>
 {{ endif }}
 
+<p>Please answer the following questions:</p>
 
 {{ if player.task_type == "Uniform" }}
-    1. What is the market value of each unit of the good?
+    1. If the number of high value signals in this round is 2, what is the market value of each unit of the good?
     {{ form.attention_value_question }} </br>
+    If in this round the players' bids are as those in the table below, then: </br>
     2. What is the market price?
     {{ form.attention_price_question }} </br>
     3. How many units is player A allocated?
     {{ form.attention_allocation_question }} </br>
-    4. How many point earnings does player A obtain?
+    4. Suppose the value of each unit of the goods is 3, how many point earnings does player A obtain?
     {{ form.attention_earning_question }} </br>
 {{ else if player.task_type == "Fixed" }}
     1. If the number of good signals in this round is 2, what is the market value of each unit of the good?
