@@ -136,15 +136,31 @@ During the session, please do not talk or communicate with any of the other part
     (The numbers of the questions do not relate to the numbers of the real experiment.)
 </p>
 
+<!-- An Example Case -->
+<h7><br><b>An Example Case</b></h7><br>
+    Let's assume that there are 100 units for sale, and Player A plays with Player B.
+    The table below shows how Player A and Player B bid in this round, then: <br>
+    <br><li><b>Market Value</b>: Since both players received a high value signal, <u>the market value is 3</u> (i.e., the number of high value signal in the group + 1).</li>
+    <br><li><b>Market Price</b>: At price 2, the cumulative units all players bid exceeded the number of units for sale (here, 100), so <u>the market price is 2.</u> </li>
+    <br><li><b>Units Allocation</b>: Player A receives 50 units because Player A bid the 50 units for above the market price.
+    Player B will receive 50 units. The 20 units that were bid for above the market price will be fully allocated.
+    However, only 30 out of 50 at the market price will be allocated since only 30 units are available at the market price.</u> </li>
+    <br><li><b>Points Earning</b>: Points earnings will be the per unit market value minus the market price, multiplied by the number of units allocated to you.
+    In this example, the per unit market value is 3, the market price is 2, and each player received 50 units.
+    So, both Player A and Player B will earn 50 points in this round. </u> </li><br>
+
+
+    <img src="{{ static 'ExplanationCase.png' }}"/></br></br>
 
 <!-- ATTENTION CHECK QUESTIONS -->
-<h7><b>Attention Check Questions</b></h7>
+<h7><br><b>Attention Check Questions</b></h7>
 
 <p>Please answer the following question to make sure you understood the task.</p>
 
 {{ if player.task_type == "Uniform" }}
     Suppose there are 100 units for sale.
     Player A plays with Player B.
+    Player A received a low value market signal, while Player B received a high value market signal.
     Each player who bids for more than 100 units needs to pay a cost of 5 points.
     If in this round the numbers of units that players bid for are as below, then: <br><br>
 {{ else if player.task_type == "Fixed" }}
