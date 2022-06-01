@@ -224,8 +224,9 @@ class UniformBid(Page):
     def before_next_page(player: Player, timeout_happened):
         if timeout_happened:
             player.is_missing_response = 1
-            player.price1 = 0  # we assume that this player bids at a price 0
-            player.quantity1 = 0  # we assume that this player bids a quantity 0
+            if player.price1 is None or player.quantity1 is None:
+                player.price1 = 0  # we assume that this player bids at a price 0
+                player.quantity1 = 0  # we assume that this player bids a quantity 0
         else:
             player.is_missing_response = 0
 
